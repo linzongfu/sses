@@ -38,8 +38,8 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG', false),
-
+    //'debug' => env('APP_DEBUG', false),
+    'debug' => true,
     /*
     |--------------------------------------------------------------------------
     | Application URL
@@ -122,7 +122,8 @@ return [
 
     'log' => env('APP_LOG', 'single'),
 
-    'log_level' => env('APP_LOG_LEVEL', 'debug'),
+   // 'log_level' => env('APP_LOG_LEVEL', 'debug'),
+    'log_level' => 'debug',
 
     /*
     |--------------------------------------------------------------------------
