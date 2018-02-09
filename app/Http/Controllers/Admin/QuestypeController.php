@@ -48,7 +48,7 @@ class QuestypeController extends Controller
     }
 
     /**
-     * @api {get} /admin/questype/:id  得到指定查询试题
+     * @api {get} /admin/questype/:id  指定类型的题
      *
      * @apiName question
      * @apiGroup EntrTest
