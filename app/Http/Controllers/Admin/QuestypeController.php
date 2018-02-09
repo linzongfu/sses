@@ -65,7 +65,7 @@ class QuestypeController extends Controller
      *@apiParam {Number} keyword 排序 默认为无
      *
      * @apiSuccess {String} data
-     * @apiSampleRequest /admin/questype/:id?page=1&limit=10&sort=num&keyword=计算机
+     * @apiSampleRequest /admin/questype/:id
      */
     public function show($id,Request $request){
         $page=$request->get("page",1)-1;
