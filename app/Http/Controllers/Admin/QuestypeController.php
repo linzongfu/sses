@@ -59,10 +59,8 @@ class QuestypeController extends Controller
      * {
      *      Authorization: Bearer {token}
      * }
-     * @apiParam {Number} page 当前页 默认为1
+     * @apiParam {Number}  page 当前页 默认为1
      * @apiParam {Number} limit 当前页条数 默认为10
-     *@apiParam {Number} sort 排序 默认为num
-     *@apiParam {Number} keyword 排序 默认为无
      *
      * @apiSuccess {String} data
      * @apiSampleRequest /admin/questype/:id
