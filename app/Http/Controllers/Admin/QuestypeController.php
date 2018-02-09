@@ -46,12 +46,12 @@ class QuestypeController extends Controller
         }
         return $tree;
     }
-  
+
     /**
-     * @api {get} /admin/questype/:id  接口测试
+     * @api {get} /admin/questype/:id  得到指定查询试题
      *
      * @apiName question
-     * @apiGroup questype
+     * @apiGroup EntrTest
      * @apiVersion 1.0.0
      *
      * @apiHeader (Authorization) {String} Authorization Bearer {token}.
