@@ -10,13 +10,20 @@ use App\Models\Question;
 class QuestypeController extends Controller
 {
     /**
-     * @api {get} /admin/questype 接口测试
-     * @apiDescription 所有入学测试题目分类
-     * @apiGroup 入学测试
+     * @api {get} /admin/questype 所有入学测试类型
      *
-     * @apiParamExample {string} 请求参数格式:
-     * /admin/questype
+     * @apiName questype
+     * @apiGroup EntrTest
      * @apiVersion 1.0.0
+     *
+     * @apiHeader (Authorization) {String} Authorization Bearer {token}.
+     * @apiHeaderExample {json} Header-Example:
+     * {
+     *      Authorization: Bearer {token}
+     * }
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/questype
      */
     public function index()
     {
@@ -39,20 +46,26 @@ class QuestypeController extends Controller
         }
         return $tree;
     }
+  
     /**
      * @api {get} /admin/questype/:id  接口测试
-     * @apiDescription 获得指定类型的所有题目
-     * @apiGroup 入学测试
      *
-     * @apiParam {Number} [page] 当前页默认1
-     * @apiParam {Number} [limit] 每页条数默认10
-     * @apiParam {Number} [keyword] 搜索关键词默认无
-     * @apiParam {Number} [sort] 排序 默认题号
-     *
-     * @apiParamExample {string} 请求参数格式:
-     *    /admin/questype/:id?page=1&perpage=20
-     *
+     * @apiName question
+     * @apiGroup questype
      * @apiVersion 1.0.0
+     *
+     * @apiHeader (Authorization) {String} Authorization Bearer {token}.
+     * @apiHeaderExample {json} Header-Example:
+     * {
+     *      Authorization: Bearer {token}
+     * }
+     * @apiParam {Number} page 当前页 默认为1
+     * @apiParam {Number} limit 当前页条数 默认为10
+     *@apiParam {Number} sort 排序 默认为num
+     *@apiParam {Number} keyword 排序 默认为无
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /admin/questype/:id?page=1&limit=10&sort=num&keyword=计算机
      */
     public function show($id,Request $request){
         $page=$request->get("page",1)-1;
