@@ -61,23 +61,28 @@ class QuestypeController extends Controller
      * }
      * @apiParam {Number}  page 当前页 默认为1
      * @apiParam {Number} limit 当前页条数 默认为10
+     * @apiParam {String} keyword 当前页 默认为1
+     * @apiParam {String} sort 排序 默认为num
      *
      * @apiSuccess {String} data
      * @apiSampleRequest /admin/questype/:id
      */
     public function show($id,Request $request){
-        $page=$request->get("page",1)-1;
+        $page=$request->get("page",1);
         $limit=$request->get("limit",10);
+        $page=$page?$page:0;
+        $limit=$limit?$limit:10;
         $start=$page*$limit;
-        $sort=explode(',',$request->get('sort','num'));
-        $keyword=$request->get('keyword','');
+        $sort=$request->get('sort');
+        if(!$sort) $sort="num";
+        $keyword=$request->get('keyword');
         $questions=Question::select('id','num','qustype_id','title','type','info','answer')->where('qustype_id',$id);
         if($keyword)
             $questions->where('title','LIKE','%'.$keyword."%");
         $data['total']=$questions->count();
         $data['list']=$questions->
         skip($start)->
-        take($limit)->orderBy($sort[0])
+        take($limit)->orderBy($sort)
             ->get();
         return response()->json($data);
 
