@@ -10,9 +10,13 @@ use App\Models\Question;
 class QuestypeController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @api {get} /admin/questype 接口测试
+     * @apiDescription 所有入学测试题目分类
+     * @apiGroup 入学测试
      *
-     * @return \Illuminate\Http\Response
+     * @apiParamExample {string} 请求参数格式:
+     * /admin/questype
+     * @apiVersion 1.0.0
      */
     public function index()
     {
@@ -36,15 +40,25 @@ class QuestypeController extends Controller
         return $tree;
     }
     /**
-     * Show the form for creating a new resource.
+     * @api {get} /admin/questype/:id  接口测试
+     * @apiDescription 获得指定类型的所有题目
+     * @apiGroup 入学测试
      *
-     * @return \Illuminate\Http\Response
+     * @apiParam {Number} [page] 当前页默认1
+     * @apiParam {Number} [limit] 每页条数默认10
+     * @apiParam {Number} [keyword] 搜索关键词默认无
+     * @apiParam {Number} [sort] 排序 默认题号
+     *
+     * @apiParamExample {string} 请求参数格式:
+     *    /admin/questype/:id?page=1&perpage=20
+     *
+     * @apiVersion 1.0.0
      */
     public function show($id,Request $request){
         $page=$request->get("page",1)-1;
         $limit=$request->get("limit",10);
         $start=$page*$limit;
-        $sort=explode(',',$request->get('sort','id'));
+        $sort=explode(',',$request->get('sort','num'));
         $keyword=$request->get('keyword','');
         $questions=Question::select('id','num','qustype_id','title','type','info','answer')->where('qustype_id',$id);
         if($keyword)
@@ -62,54 +76,25 @@ class QuestypeController extends Controller
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
 
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy($id)
     {
         //
