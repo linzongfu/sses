@@ -11,10 +11,19 @@
 |
 */
 
-
-Route::get('/questype', 'QuestypeController@index');
-Route::get('/questype/{id}', 'QuestypeController@show');
-Route::get('/aa', function () {
-    echo "ddddd";
+Route::group(['namespace'=>'Admin',
+    'prefix'=>'admin',
+    'middlewate'=>['cors']
+    ],function ($app){
+   $app->get('/questype', 'QuestypeController@index');
+   $app->get('/test', 'QuestypeController@test');
+   $app->post('/questype/create', 'QuestypeController@addquestype');
+   $app->post('/questype/edit', 'QuestypeController@editquestype');
+   $app->delete('/questype/del', 'QuestypeController@delquestype');
+   $app->get('/questype/{id}', 'QuestypeController@show');
+   $app->get('/aa', function () {
+        echo "ddddd";
+    });
 });
+
 
