@@ -13,7 +13,7 @@
 
 Route::group(['namespace'=>'Admin',
     'prefix'=>'admin',
-    'middlewate'=>['cors']
+    'middleware'=>'cors'
     ],function ($app){
    $app->get('/questype', 'QuestypeController@index');
    $app->get('/test', 'QuestypeController@test');
