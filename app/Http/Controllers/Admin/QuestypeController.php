@@ -141,7 +141,7 @@ class QuestypeController extends Controller
      * @apiSampleRequest /admin/questype/:id
      */
     public function show($id,Request $request){
-        $page=$request->get("page",1);
+        $page=$request->get("page",0);
         $limit=$request->get("limit",10);
         $page=$page?$page:0;
         $limit=$limit?$limit:10;
