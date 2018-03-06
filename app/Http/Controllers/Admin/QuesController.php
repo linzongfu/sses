@@ -14,7 +14,7 @@ class QuesController extends Controller
     }
     public function ques()
     {
-        //
+        $ddd=null;
     }
 
     public function create()
