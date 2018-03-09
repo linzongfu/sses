@@ -16,7 +16,7 @@ use Validator;
 class UsersController extends Controller
 {
     /**
-     * @api {get} /api/login 用户登录
+     * @api {post} /api/login 用户登录
      *
      * @apiName Userlogin
      * @apiGroup User
