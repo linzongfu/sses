@@ -14,7 +14,8 @@ use Illuminate\Http\Request;
 */
 
 Route::group([
-    'namespace'=>'Api'
+    'namespace'=>'Api',
+    'middleware'=>'cors'
 ],function ($app){
    $app->get('/Test', 'TestController@index');
 
