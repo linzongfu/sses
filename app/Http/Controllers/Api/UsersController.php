@@ -22,11 +22,8 @@ class UsersController extends Controller
      * @apiGroup User
      * @apiVersion 1.0.0
      *
-     * @apiHeader (Authorization) {String} Authorization Bearer {token}.
-     * @apiHeaderExample {json} Header-Example:
-     * {
-     *      Authorization: Bearer {token}
-     * }
+     * @apiParam {String}  Noid 学号/职工号
+     * @apiParam {String}  Password 密码
      *
      * @apiSuccess {array} data
      * @apiSampleRequest /api/login
