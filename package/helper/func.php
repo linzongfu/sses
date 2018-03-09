@@ -22,4 +22,5 @@ function getfuncby($Noid){
     }
     return $funcid;
 }
+
 ?>

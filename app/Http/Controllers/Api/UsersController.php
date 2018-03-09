@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Appoint;
+use App\Models\Authview;
 use App\Models\FFunction;
 use App\Models\Operate;
 use App\Models\User;
@@ -35,7 +36,12 @@ class UsersController extends Controller
        $user= User::where(['Noid'=>$Noid,'password'=>md5(md5($password).$password)])->first();
         if(!$user)return response()->json(['code'=>400,'msg'=>'用户名密码错误']);
         getfuncby($Noid);
-        return response()->json($user);
+
+        $role=Appoint::select("role_id")->where("Noid",$Noid)->get();
+        $roleid= getArraybystr($role,"role_id");
+        $result["Noid"]=$Noid;
+        $result["permits"]= getArraybystr(Authview::select("permits")->where("role_id",$roleid)->get(),"permits")[0];
+        return response()->json(['code'=>200,"data"=>$result]);
     }
     public function add(Request $request){
         $opuser= $request->header("opuser");
