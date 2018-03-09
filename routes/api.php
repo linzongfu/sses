@@ -17,6 +17,10 @@ Route::group([
     'namespace'=>'Api'
 ],function ($app){
    $app->get('/Test', 'TestController@index');
+
+    $app->post('/login', 'UsersController@login');
+    $app->post('/users/add', 'UsersController@add');
+
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');
     $app->middleware('auth:api')->get('/user', function (Request $request) {
