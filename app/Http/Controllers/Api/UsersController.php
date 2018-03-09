@@ -30,7 +30,7 @@ class UsersController extends Controller
      */
     public function login(Request $request){
         $Noid=$request->get('Noid');
-        $password=$request->get('password');
+        $password=$request->get('Password');
         if(!$Noid||!$password) return response()->json(['code'=>400,'msg'=>'参数错误']);
        $user= User::where(['Noid'=>$Noid,'password'=>md5(md5($password).$password)])->first();
         if(!$user)return response()->json(['code'=>400,'msg'=>'用户名密码错误']);
