@@ -22,6 +22,9 @@ Route::group([
     $app->post('/login', 'UsersController@login');
     $app->post('/users/add', 'UsersController@add');
 
+    $app->get('/EnTest/{id}', 'EntestController@Entest');
+
+
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');
     $app->middleware('auth:api')->get('/user', function (Request $request) {

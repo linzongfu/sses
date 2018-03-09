@@ -38,7 +38,7 @@ class UsersController extends Controller
         return response()->json($user);
     }
     public function add(Request $request){
-        $opuser=$request->get("opuser");
+        $opuser= $request->header("opuser");
         if(!$opuser) return response()->json(["code"=>401,"msg"=>"未登录"]);
         if(!in_array(6,getfuncby($opuser)))
             return   response()->json(["code"=>403,"msg"=>"禁止访问"]);
