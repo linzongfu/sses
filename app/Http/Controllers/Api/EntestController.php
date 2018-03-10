@@ -37,25 +37,9 @@ class EntestController extends Controller
 
 
 
-       $questypes=Qustype::all()->where("status",0)->toArray();
-       $questypes=$this->getTree($questypes,0);
+       $questypes=Qustype::all()->where(["status"=>0,"pid"=>0])->toArray();
        return response()->json($questypes);
    }
-    public function getTree($data, $pId)
-    {
-        $tree = '';
-        foreach($data as $k => $v)
-        {
-
-            if($v['pid'] == $pId)
-            {         //父亲找到儿子
-                $v['pid'] = $this->getTree($data, $v['id']);
-                $tree[] = $v;
-                //unset($data[$k]);
-            }
-        }
-        return $tree;
-    }
 
     /**
      * @api {get} /api/EnTest/:id  进入入学测试
@@ -193,6 +177,7 @@ class EntestController extends Controller
 //
 
 
+        $result["count"]=count($result["question"]);
         return response()->json($result);
 
     }
