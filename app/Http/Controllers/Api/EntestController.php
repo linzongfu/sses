@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Models\Entesting;
 use App\Models\Qustype;
 use Illuminate\Http\Request;
@@ -9,7 +10,49 @@ use App\Http\Controllers\Controller;
 
 class EntestController extends Controller
 {
+    /**
+     * @api {get} /api/ChoiceTest 所有入学测试类型
+     *
+     * @apiName ChoiceTest
+     * @apiGroup EntrTest
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     * @apiHeaderExample {json} Header-Example:
+     * {
+     *      opuser
+     * }
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /api/ChoiceTest
+     */
+    public function  index(Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(6,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
 
+
+
+       $questypes=Qustype::all()->toArray();
+       $questypes=$this->getTree($questypes,0);
+       return response()->json($questypes);
+   }
+    public function getTree($data, $pId)
+    {
+        $tree = '';
+        foreach($data as $k => $v)
+        {
+
+            if($v['pid'] == $pId)
+            {         //父亲找到儿子
+                $v['pid'] = $this->getTree($data, $v['id']);
+                $tree[] = $v;
+                //unset($data[$k]);
+            }
+        }
+        return $tree;
+    }
 
     /**
      * @api {get} /api/EnTest/:id  进入入学测试

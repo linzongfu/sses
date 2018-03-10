@@ -22,7 +22,9 @@ Route::group([
     $app->post('/login', 'UsersController@login');
     $app->post('/users/add', 'UsersController@add');
 
+    $app->get('/ChoiceTest', 'EntestController@index');
     $app->get('/EnTest/{id}', 'EntestController@Entest');
+
 
 
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
