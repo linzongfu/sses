@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 class EntestController extends Controller
 {
     /**
-     * @api {get} /api/ChoiceTest 所有入学测试类型
+     * @api {get} /api/ChoiceTest 选择入学测试类型
      *
      * @apiName ChoiceTest
      * @apiGroup EntrTest
