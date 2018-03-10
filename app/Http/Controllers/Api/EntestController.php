@@ -21,7 +21,7 @@ class EntestController extends Controller
      * @apiHeader (opuser) {String} opuser
      * @apiHeaderExample {json} Header-Example:
      * {
-     *      opuser: Noid
+     *      opuser
      * }
      *
      * @apiSuccess {String} data
