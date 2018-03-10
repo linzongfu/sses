@@ -18,7 +18,7 @@ class EntestController extends Controller
      * @apiGroup EntrTest
      * @apiVersion 1.0.0
      *
-     * @apiHeader (opuser) {String} opuser:Noid.
+     * @apiHeader (opuser) {String} opuser
      * @apiHeaderExample {json} Header-Example:
      * {
      *      opuser: Noid
