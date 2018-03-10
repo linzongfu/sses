@@ -37,7 +37,7 @@ class EntestController extends Controller
 
 
 
-       $questypes=Qustype::all()->where(["status"=>0,"pid"=>0])->toArray();
+       $questypes=Qustype::select("*")->where(["status"=>0,"pid"=>"0"])->get();
        return response()->json($questypes);
    }
 
