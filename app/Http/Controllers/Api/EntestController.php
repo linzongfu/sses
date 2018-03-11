@@ -32,7 +32,7 @@ class EntestController extends Controller
     public function  index(Request $request){
         $opuser=$request->header("opuser");
         accessControl($opuser,6);
-        
+
        $questypes=Qustype::select("*")->where(["status"=>0,"pid"=>"0"])->get();
        return response()->json($questypes);
    }
@@ -95,7 +95,7 @@ class EntestController extends Controller
                 $result["questype"]=Qustype::select("*")->where("belongto",$mojor_id)->get()[0];
                 if (!$result["questype"]) return response()->json(["code"=>400,"msg"=>"请联系管理员反馈个人信息"]);
 
-                $entest["choice"]=Qustype::find($mojor_id)->questions()->get();
+                $entest["choice"]=Qustype::find($mojor_id)->questions()->where("type",0)->orderBy(\DB::raw('RAND()'))->take(10)->get();
                 $entest["judgment"]=Qustype::find($mojor_id)->questions()->where("type",2)->orderBy(\DB::raw('RAND()'))->take(10)->get();;
                 $entest["completion"]=Qustype::find($mojor_id)->questions()->where("type",3)->orderBy(\DB::raw('RAND()'))->take(5)->get();;
                 $entest["answer"]=Qustype::find($mojor_id)->questions()->where("type",4)->orderBy(\DB::raw('RAND()'))->take(5)->get();;
@@ -179,9 +179,19 @@ class EntestController extends Controller
     public function store(Request $request)
     {
         $opuser=$request->header("opuser");
-        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
-        if(!in_array(6,getfuncby($opuser)))
-            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+        accessControl($opuser,6);
+
+        $entest_id=$request->get("entest_id");
+        if(!$entest_id) return response()->json(['code'=>400,'msg'=>'参数错误']);
+        $entest_pid=Qustype::find($entest_id)->pid;
+
+        if ($entest_id!=2)
+        {
+            dd("aa");
+        }else {
+            dd("bb");
+        }
+        return response()->json($entest_pid);
 
 
     }
