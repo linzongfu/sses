@@ -11,15 +11,19 @@ function getArraybystr($Elo,$str){
     return $sid;
 }
 function getfuncby($Noid){
-    if(Cache::has($Noid."function"))
-    $funcid=Cache::get($Noid."function");
-    else{
+//    if(Cache::has($Noid."function"))
+//    $funcid=Cache::get($Noid."function");
+//    else{
+//        $role=Appoint::select("role_id")->where('Noid',$Noid)->get();
+//        $roleid= getArraybystr($role,"role_id");
+//        $func=Operate::select("func_id")->whereIn("role_id",$roleid)->distinct()->get();
+//        $funcid=getArraybystr($func,"func_id");
+//        Cache::add($Noid."function",$funcid,20);
+//    }
         $role=Appoint::select("role_id")->where('Noid',$Noid)->get();
         $roleid= getArraybystr($role,"role_id");
         $func=Operate::select("func_id")->whereIn("role_id",$roleid)->distinct()->get();
         $funcid=getArraybystr($func,"func_id");
-        Cache::add($Noid."function",$funcid,20);
-    }
     return $funcid;
 }
 
