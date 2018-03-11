@@ -31,12 +31,8 @@ class EntestController extends Controller
      */
     public function  index(Request $request){
         $opuser=$request->header("opuser");
-        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
-        if(!in_array(6,getfuncby($opuser)))
-            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
-
-
-
+        accessControl($opuser,6);
+        
        $questypes=Qustype::select("*")->where(["status"=>0,"pid"=>"0"])->get();
        return response()->json($questypes);
    }
@@ -60,10 +56,7 @@ class EntestController extends Controller
     public function Entest($id,Request $request)
     {
         $opuser=$request->header("opuser");
-        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
-        if(!in_array(6,getfuncby($opuser)))
-            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
-        if (!$id) response()->json(["code"=>400,"msg"=>"pleace enter quetype"]);
+        accessControl($opuser,6);
 
         $result=[];
         if ($id==1){  //性格测试
@@ -185,7 +178,12 @@ class EntestController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(6,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+
     }
 
     /**
