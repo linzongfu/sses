@@ -87,7 +87,7 @@ class EntestController extends Controller
             }else   //有  更具用户是否回答过再进行判断
             {
                 if($est->useranswers){
-                    return response()->json(["code"=>200,"msg"=>"you are already tested"]);
+                    return response()->json(["code"=>400,"msg"=>"you are already tested"]);
                 }else{
                     $result["questype"]=Qustype::find($est->questype_id);
                     $result["question"]=Question::select("*")->whereIn("id",explode(",",$est->questions))->get();
@@ -99,7 +99,9 @@ class EntestController extends Controller
             $est=Enmajortest::where("user_id",$opuser)->first();
             if(!$est){
                 $mojor_id=  getArraybystr(User::select("major_id")->where("Noid",$opuser)->get(),"major_id")[0];
-                $result["questype"]=Qustype::find($mojor_id);
+                $result["questype"]=Qustype::select("*")->where("belongto",$mojor_id)->get()[0];
+                if (!$result["questype"]) return response()->json(["code"=>400,"msg"=>"请联系管理员反馈个人信息"]);
+
                 $entest["choice"]=Qustype::find($mojor_id)->questions()->get();
                 $entest["judgment"]=Qustype::find($mojor_id)->questions()->where("type",2)->orderBy(\DB::raw('RAND()'))->take(10)->get();;
                 $entest["completion"]=Qustype::find($mojor_id)->questions()->where("type",3)->orderBy(\DB::raw('RAND()'))->take(5)->get();;
@@ -128,56 +130,39 @@ class EntestController extends Controller
                 }
             }
         }
+        else if($id==3){
+                 $est=Entesting::where(["entest_id"=>$id,"user_id"=>$opuser])->first();
+                 if(!$est){
 
-//
-//        if(!$est){
-//            if ($id==1){
-//                $qt=Qustype::select("id")->where(["pid"=>$id,"status"=>0])->get();
-//                $randmax=$qt->count()-1;
-//                $qt=getArraybystr($qt,"id");
-//                $quetype=$qt[rand(0,$randmax)];
-//                $result["questype"]=Qustype::find($quetype);
-//                $entest=Qustype::find($quetype)->questions() ->get();
-//                $result["question"]=$entest;
-//
-//            }else
-//                if($id==2){
-//                $qt=Qustype::select("id")->where(["pid"=>$id,"status"=>0])->get();
-//                $randmax=$qt->count()-1;
-//                $qt=getArraybystr($qt,"id");
-//                $quetype=$qt[rand(0,$randmax)];
-//                $result["questype"]=Qustype::find($quetype);
-//                $entest["choice"]=Qustype::find($quetype)->questions()->WHERE("type",0)->orderBy(\DB::raw('RAND()'))->take(10)->get();;
-//                $entest["judgment"]=Qustype::find($quetype)->questions()->WHERE("type",2)->orderBy(\DB::raw('RAND()'))->take(10)->get();;
-//                $entest["completion"]=Qustype::find($quetype)->questions()->WHERE("type",3)->orderBy(\DB::raw('RAND()'))->take(5)->get();;
-//                $entest["answer"]=Qustype::find($quetype)->questions()->WHERE("type",4)->orderBy(\DB::raw('RAND()'))->take(5)->get();;
-//
-//                $result["question"]=$entest;
-//            }else
-//                if($id==3){
-//                $qt=Qustype::select("id")->where(["pid"=>$id,"status"=>0])->get();
-//                $randmax=$qt->count()-1;
-//                $qt=getArraybystr($qt,"id");
-//                $quetype=$qt[rand(0,$randmax)];
-//                $result["questype"]=Qustype::find($quetype);
-//                $entest=Qustype::find($quetype)->questions()->orderBy(\DB::raw('RAND()'))->take(30)->get();
-//                $result["question"]=$entest;
-//            }
-//
-//        }
-//        else{
-//            if($est->useranswers){
-//                return response()->json(["code"=>200,"msg"=>"you are already tested"]);
-//            }else{
-//                $result["questype"]=Qustype::find($est->questype_id);
-//
-//                $result["question"]=$est->questions;
-//            }
-//        }
-//
+                     $branch= getArraybystr(User::select("branch")->where("Noid",$opuser)->get(),"branch")[0];
+
+                     if (!($branch==1||$branch==2)) return response()->json(["code"=>400,"msg"=>"请联系管理员反馈个人信息"]);
+
+                     $result["questype"]=Qustype::select("*")->where("belongto",$branch)->get()[0];
 
 
-        $result["count"]=count($result["question"]);
+                     $entest=Qustype::find( $result["questype"]->id)->questions() ->get();
+                     $result["question"]=$entest;
+
+
+                     $ente=new Entesting();
+                     $ente->entest_id=$id;
+                     $ente->user_id=$opuser;
+                     $ente->questype_id=$result["questype"]->id;
+                     $ente->questions=implode(",",getArraybystr($entest,'id'));
+                     $ente->save();
+                }
+                else {
+                    if($est->useranswers){
+                        return response()->json(["code"=>400,"msg"=>"you are already tested"]);
+                    }else{
+                        $result["questype"]=Qustype::find($est->questype_id);
+                        $result["question"]=Question::select("*")->whereIn("id",explode(",",$est->questions))->get();
+                    }
+                }
+        }
+
+      $result["count"]=count($result["question"]);
         return response()->json($result);
 
     }
