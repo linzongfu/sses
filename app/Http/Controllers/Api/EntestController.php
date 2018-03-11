@@ -171,10 +171,24 @@ class EntestController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @api {post} /EnTest/Submit  提交测试结果
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @apiName submitTest
+     * @apiGroup EntrTest
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     * @apiHeaderExample {json} Header-Example:
+     * {
+     *      opuser
+     * }
+     *
+     * @apiParam {int}  result 结果标签id
+     * @apiParam {int}  entest_id 测试类型id
+     * @apiParam {string}  useranswer 用户回答
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /EnTest/Submit
      */
     public function store(Request $request)
     {
@@ -185,13 +199,36 @@ class EntestController extends Controller
         if(!$entest_id) return response()->json(['code'=>400,'msg'=>'参数错误']);
         $entest_pid=Qustype::find($entest_id)->pid;
 
-        if ($entest_id!=2)
+
+
+        if ($entest_pid!=2)
         {
-            dd("aa");
+            $useranswer=$request->get("useranswer");
+            $result=$request->get("result");
+            if(!$result||!$useranswer)
+                 return response()->json(['code'=>400,'msg'=>'missing result or useranser']);
+
+            $entest=Entesting::select("*")->where(['entest_id'=>$entest_pid,'user_id'=>$opuser])->first();
+
+            if (empty($entest)){
+                return response()->json(['code'=>403,'msg'=>'请先进行入学测试']);
+            }else{
+                if($entest->useranswers)
+                    return response()->json(['code'=>403,'msg'=>'你已经提交测试']);
+            }
+
+            $entest->useranswers=$useranswer;
+            $entest->save();
+            if ($entest_pid==1)
+                User::where('Noid',$opuser)->update(["characterlabel_id"=>$result]);
+            else if($entest_pid==2)
+                User::where('Noid',$opuser)->update(["branchlabel_id"=>$result]);
+            else  return response()->json(['code'=>400,'msg'=>'参数错误']);
+
         }else {
             dd("bb");
         }
-        return response()->json($entest_pid);
+        return response()->json(['code'=>200,'msg'=>"提交成功"]);
 
 
     }
