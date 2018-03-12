@@ -226,7 +226,18 @@ class EntestController extends Controller
             else  return response()->json(['code'=>400,'msg'=>'参数错误']);
 
         }else {
-            dd("bb");
+            $choice=$request->get("choice");
+            $judgment=$request->get("judgment");
+            $completion=$request->get("completion");
+            $answer=$request->get("answer");
+            if(!$choice||!$judgment||!$completion||!$answer){
+                return response()->json(['code'=>400,'msg'=>'请做完试卷后提交']);
+            }
+
+          //  $aa= json_decode($json,true);
+          //  dd($aa["a"]);
+        //    var_dump(json_decode($json, true));
+            die;
         }
         return response()->json(['code'=>200,'msg'=>"提交成功"]);
 
