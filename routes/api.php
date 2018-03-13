@@ -27,6 +27,8 @@ Route::group([
     $app->post('/EnTest/Submit', 'EntestController@store');
 
 
+    $app->get('/teacher/index', 'TeaController@index');
+
 
 
     $app->get('/Test/{id}', 'Api\TestController@EnTest');

@@ -9,7 +9,8 @@
         "barryvdh/laravel-cors": "^0.11.0",
         "barryvdh/laravel-ide-helper": "dev-master",
         "laravel/framework": "5.4.*",
-        "laravel/tinker": "~1.0"
+        "laravel/tinker": "~1.0",
+        "nesbot/carbon": "^1.24"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

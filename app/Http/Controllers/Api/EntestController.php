@@ -199,8 +199,6 @@ class EntestController extends Controller
         if(!$entest_id) return response()->json(['code'=>400,'msg'=>'参数错误']);
         $entest_pid=Qustype::find($entest_id)->pid;
 
-
-
         if ($entest_pid!=2)
         {
             $useranswer=$request->get("useranswer");

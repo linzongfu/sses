@@ -44,10 +44,12 @@ class UsersController extends Controller
         $result["permits"]=  getArraybystr(Authview::select("permits")->where("role_id",$roleid)->get(),"permits")[0];
         return response()->json(['code'=>200,"data"=>$result]);
     }
+
+
     public function add(Request $request){
         $opuser= $request->header("opuser");
         if(!$opuser) return response()->json(["code"=>401,"msg"=>"未登录"]);
-        if(!in_array(6,getfuncby($opuser)))
+        if(!in_array(1,getfuncby($opuser)))
             return   response()->json(["code"=>403,"msg"=>"禁止访问"]);
 
         try{
