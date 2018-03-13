@@ -27,8 +27,6 @@ function getfuncby($Noid){
     return $funcid;
 }
 function accessControl($opuser,$access_id){
-    if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
-    if(!in_array($access_id,getfuncby($opuser)))
-        return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
 }
 ?>

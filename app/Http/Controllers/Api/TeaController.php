@@ -29,7 +29,10 @@ class TeaController extends Controller
      */
     public function  index(Request $request){
         $opuser=$request->header("opuser");
-        accessControl($opuser,4);
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+
+        if(!in_array(4,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
 
 
         $result["class"]=Teach::select('class_id')->where([
@@ -40,6 +43,7 @@ class TeaController extends Controller
             ['teach_id','=',$opuser],
             ['endtime','>',Carbon::now()],
         ])->get();
+        
         $result["class"]=Cllass::select('id','name')->whereIn('id',getArraybystr($result["class"],'class_id'))->get();
         $result["course"]=Course::select('id','name')->whereIn('id',getArraybystr($result["course"],'course_id'))->get();
         return response()->json($result);
