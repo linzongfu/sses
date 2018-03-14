@@ -24,11 +24,11 @@ Route::group([
 
     $app->get('/ChoiceTest', 'EntestController@index');
     $app->get('/EnTest/{id}', 'EntestController@Entest');
-    $app->get('/EnTest/Submit', 'EntestController@store');
+    $app->post('/EnTest/Submit', 'EntestController@store');
 
 
     $app->get('/teacher/index', 'TeaController@index');
-    $app->post('/teacher/showteach', 'TeaController@show');
+    $app->get('/teacher/showteach', 'TeaController@show');
 
 
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
