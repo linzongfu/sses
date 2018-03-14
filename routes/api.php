@@ -24,7 +24,7 @@ Route::group([
 
     $app->get('/ChoiceTest', 'EntestController@index');
     $app->get('/EnTest/{id}', 'EntestController@Entest');
-    $app->post('/EnTest/Submit', 'EntestController@store');
+    $app->get('/EnTest/Submit', 'EntestController@store');
 
 
     $app->get('/teacher/index', 'TeaController@index');
