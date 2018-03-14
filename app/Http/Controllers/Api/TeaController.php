@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Attend;
 use App\Models\Cllass;
 use App\Models\Course;
 use App\Models\Teach;
@@ -84,4 +85,49 @@ class TeaController extends Controller
        // $result=Teach::find(1)->get();
         return response()->json($result);
     }
+
+    /**
+     * @api {get} /api/teacher/showteach/:id   查看学生出勤
+     *
+     * @apiName LookAttend
+     * @apiGroup Teacher
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     * @apiHeaderExample {json} Header-Example:
+     * {
+     *      opuser
+     * }
+     *
+     * @apiParam {int}  classid 任课班级id
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/teacher/showteach/:id
+     */
+    public function showattend($id,Request $request){
+        $opuser=$request->header("opuser");
+        // dd($opuser);
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(4,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $class=$request->get("classid");
+        if(!$class) return response()->json(["code"=>403,"msg"=>"classid is missing"]);
+        $late=getArraybystr((Attend::select("student_id")->where(["calendar_id"=>$id,"signin"=>0,"signout"=>1])->get()),"student_id");
+        $attendance=getArraybystr((Attend::select("student_id")->where(["calendar_id"=>$id])->get()),"student_id");
+        $leaveearly=getArraybystr((Attend::select("student_id")->where(["calendar_id"=>$id,"signin"=>1,"signout"=>0])->get()),"student_id");
+//return response()->json($leaveearly);
+
+        $result["late"]=User::select('id','Noid','name')->where("class_id",$class)->whereIn('Noid',$late)->get()->toArray();
+        $result["attendance"]=User::select('id','Noid','name')->where("class_id",$class)->whereIn('Noid',$attendance)->get()->toArray();
+        $result["leaveearly"]=User::select('id','Noid','name')->where("class_id",$class)->whereIn('Noid',$leaveearly)->get()->toArray();
+        $result["absence"]=User::select('id','Noid','name')->where("class_id",$class)->whereNotIn('Noid',$attendance)->get()->toArray();
+
+        //  $result["attendance"]=
+       // result[];
+
+        return response()->json($result);
+    }
+
+
+
 }

@@ -30,6 +30,8 @@ Route::group([
     $app->get('/teacher/index', 'TeaController@index');
     $app->get('/teacher/showteach', 'TeaController@show');
 
+    $app->get('/teacher/showteach/{id}', 'TeaController@showattend');
+
 
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');

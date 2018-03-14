@@ -207,7 +207,6 @@ class EntestController extends Controller
                  return response()->json(['code'=>400,'msg'=>'missing result or useranser']);
 
             $entest=Entesting::select("*")->where(['entest_id'=>$entest_pid,'user_id'=>$opuser])->first();
-
             if (empty($entest)){
                 return response()->json(['code'=>403,'msg'=>'请先进行入学测试']);
             }else{
