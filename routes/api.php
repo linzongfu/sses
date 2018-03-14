@@ -28,7 +28,7 @@ Route::group([
 
 
     $app->get('/teacher/index', 'TeaController@index');
-    $app->get('/teacher/showteach', 'TeaController@show');
+    $app->post('/teacher/showteach', 'TeaController@show');
 
 
     $app->get('/Test/{id}', 'Api\TestController@EnTest');

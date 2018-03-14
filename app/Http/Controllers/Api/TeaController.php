@@ -49,7 +49,7 @@ class TeaController extends Controller
         return response()->json($result);
     }
     /**
-     * @api {get} api/teacher/showteach  查看教学记录
+     * @api {post} api/teacher/showteach  查看教学记录
      *
      * @apiName showteach
      * @apiGroup Teacher
