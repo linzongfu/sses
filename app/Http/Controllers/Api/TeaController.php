@@ -50,7 +50,7 @@ class TeaController extends Controller
     }
 
     /**
-     * @api {post} /api/teacher/showteach  查看教学记录
+     * @api {get} /api/teacher/showteach  查看教学记录
      *
      * @apiName showteach
      * @apiGroup Teacher
