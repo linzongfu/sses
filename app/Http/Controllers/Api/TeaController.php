@@ -50,7 +50,7 @@ class TeaController extends Controller
     }
 
     /**
-     * @api {post} /teacher/showteach  查看教学记录
+     * @api {post} /api/teacher/showteach  查看教学记录
      *
      * @apiName showteach
      * @apiGroup Teacher
@@ -66,7 +66,7 @@ class TeaController extends Controller
      * @apiParam {int}  courseid 课程id
      *
      * @apiSuccess {String} data
-     * @apiSampleRequest /teacher/showteach
+     * @apiSampleRequest /api/teacher/showteach
      */
     public function show(Request $request){
         $opuser=$request->header("opuser");
