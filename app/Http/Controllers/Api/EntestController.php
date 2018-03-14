@@ -171,7 +171,7 @@ class EntestController extends Controller
     }
 
     /**
-     * @api {post} /EnTest/Submit  提交测试结果
+     * @api {post} /api/EnTest/Submit  提交测试结果
      *
      * @apiName submitTest
      * @apiGroup EntrTest
@@ -188,7 +188,7 @@ class EntestController extends Controller
      * @apiParam {string}  useranswer 用户回答
      *
      * @apiSuccess {String} data
-     * @apiSampleRequest /EnTest/Submit
+     * @apiSampleRequest /api/EnTest/Submit
      */
     public function store(Request $request)
     {
