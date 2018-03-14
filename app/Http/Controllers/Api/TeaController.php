@@ -48,8 +48,9 @@ class TeaController extends Controller
         $result["course"]=Course::select('id','name')->whereIn('id',getArraybystr($result["course"],'course_id'))->get();
         return response()->json($result);
     }
+
     /**
-     * @api {post} api/teacher/showteach  查看教学记录
+     * @api {post} /teacher/showteach  查看教学记录
      *
      * @apiName showteach
      * @apiGroup Teacher
@@ -65,7 +66,7 @@ class TeaController extends Controller
      * @apiParam {int}  courseid 课程id
      *
      * @apiSuccess {String} data
-     * @apiSampleRequest api/teacher/showteach
+     * @apiSampleRequest /teacher/showteach
      */
     public function show(Request $request){
         $opuser=$request->header("opuser");

@@ -231,11 +231,6 @@ class EntestController extends Controller
             if(!$choice||!$judgment||!$completion||!$answer){
                 return response()->json(['code'=>400,'msg'=>'请做完试卷后提交']);
             }
-
-          //  $aa= json_decode($json,true);
-          //  dd($aa["a"]);
-        //    var_dump(json_decode($json, true));
-            die;
         }
         return response()->json(['code'=>200,'msg'=>"提交成功"]);
 
