@@ -119,7 +119,7 @@ class EntestController extends Controller
                     $entest["answer"]=Question::select("*")->whereIn("id",explode(",",$est->answerid))->get();
                     $result["question"]=$entest;
                 }else{
-                    return response()->json(["code"=>200,"msg"=>"you are already tested"]);
+                    return response()->json(["code"=>400,"msg"=>"you are already tested"]);
                 }
             }
         }
