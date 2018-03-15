@@ -77,7 +77,7 @@ class ScheduleController extends Controller
      * }
      *
      * @apiParam {int}  stage 学年阶段
-     * @apiParam {string}  week 这几周的课表
+     * @apiParam {string}  week 某一周的课表
      *
      * @apiSuccess {String} data
      * @apiSampleRequest /api/Schedule/show
