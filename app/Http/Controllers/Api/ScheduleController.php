@@ -35,7 +35,7 @@ class ScheduleController extends Controller
     /**
      * @api {post} /api/Schedule/show  查看教师课表
      *
-     * @apiName teacher of Schedule
+     * @apiName TeacherOfSchedule
      * @apiGroup Schedule
      * @apiVersion 1.0.0
      *
@@ -62,26 +62,6 @@ class ScheduleController extends Controller
         return response()->json($result);
     }
 
-
-    /**
-     * @api {post} /api/Schedule/show  查看教师课表
-     *
-     * @apiName teacher of Schedule
-     * @apiGroup Schedule
-     * @apiVersion 1.0.0
-     *
-     * @apiHeader (opuser) {String} opuser
-     * @apiHeaderExample {json} Header-Example:
-     * {
-     *      opuser
-     * }
-     *
-     * @apiParam {int}  stage 学年阶段
-     * @apiParam {string}  week 某一周的课表
-     *
-     * @apiSuccess {String} data
-     * @apiSampleRequest /api/Schedule/show
-     */
     public function ShowByStudent(Request $request){
         $opuser= $request->header("opuser");
         if(!$opuser) return response()->json(["code"=>401,"msg"=>"未登录"]);
