@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class StuController extends Controller
+class AttendController extends Controller
 {
-    //
+    public function Schedule(){
 
+    }
 }

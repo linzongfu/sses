@@ -117,10 +117,10 @@ class TeaController extends Controller
         $leaveearly=getArraybystr((Attend::select("student_id")->where(["calendar_id"=>$id,"signin"=>1,"signout"=>0])->get()),"student_id");
 //return response()->json($leaveearly);
 
-        $result["late"]=User::select('id','Noid','name')->where("class_id",$class)->whereIn('Noid',$late)->get()->toArray();
-        $result["attendance"]=User::select('id','Noid','name')->where("class_id",$class)->whereIn('Noid',$attendance)->get()->toArray();
-        $result["leaveearly"]=User::select('id','Noid','name')->where("class_id",$class)->whereIn('Noid',$leaveearly)->get()->toArray();
-        $result["absence"]=User::select('id','Noid','name')->where("class_id",$class)->whereNotIn('Noid',$attendance)->get()->toArray();
+        $result["late"]=User::select('id','Noid','name')->where("class_id",$class)->whereIn('Noid',$late)->get();
+        $result["attendance"]=User::select('id','Noid','name')->where("class_id",$class)->whereIn('Noid',$attendance)->get();
+        $result["leaveearly"]=User::select('id','Noid','name')->where("class_id",$class)->whereIn('Noid',$leaveearly)->get();
+        $result["absence"]=User::select('id','Noid','name')->where("class_id",$class)->whereNotIn('Noid',$attendance)->get();
 
         //  $result["attendance"]=
        // result[];
@@ -129,5 +129,13 @@ class TeaController extends Controller
     }
 
 
+    public function schedule(Request $request){
+        $opuser=$request->header("opuser");
+        // dd($opuser);
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(4,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
 
+
+
+    }
 }

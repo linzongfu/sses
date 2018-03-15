@@ -32,6 +32,9 @@ Route::group([
 
     $app->get('/teacher/showteach/{id}', 'TeaController@showattend');
 
+    $app->get('/Schedule/index','ScheduleController@index');
+    $app->post('/Schedule/show','ScheduleController@ShowByTeacher');
+
 
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');
