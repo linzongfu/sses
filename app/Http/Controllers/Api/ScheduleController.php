@@ -33,7 +33,7 @@ class ScheduleController extends Controller
            return response()->json($result);
     }
     /**
-     * @api {post} /api/Schedule/show  提交测试结果
+     * @api {post} /api/Schedule/show  查看教师课表
      *
      * @apiName teacher of Schedule
      * @apiGroup Schedule
@@ -59,6 +59,37 @@ class ScheduleController extends Controller
         $week=$request->get("week");
         if(!$stage||!$week) return response()->json(["code"=>403,"msg"=>"请选择星期和学期"]);
          $result=DB::select('select calendars.day,calendars.Section,calendars.place,courses.name FROM teaches,calendars,courses WHERE teaches.teach_id LIKE ? AND teaches.stage_id=? AND calendars.teach_id=teaches.id AND teaches.course_id=courses.id AND calendars.week LIKE ?',[$opuser,$stage,$week]);
+        return response()->json($result);
+    }
+
+
+    /**
+     * @api {post} /api/Schedule/show  查看教师课表
+     *
+     * @apiName teacher of Schedule
+     * @apiGroup Schedule
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     * @apiHeaderExample {json} Header-Example:
+     * {
+     *      opuser
+     * }
+     *
+     * @apiParam {int}  stage 学年阶段
+     * @apiParam {string}  week 这几周的课表
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/Schedule/show
+     */
+    public function ShowByStudent(Request $request){
+        $opuser= $request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"未登录"]);
+
+        $stage=$request->get("stage");
+        $week=$request->get("week");
+        if(!$stage||!$week) return response()->json(["code"=>403,"msg"=>"请选择星期和学期"]);
+        $result=DB::select('select calendars.day,calendars.Section,calendars.place,courses.name FROM teaches,calendars,courses WHERE teaches.teach_id LIKE ? AND teaches.stage_id=? AND calendars.teach_id=teaches.id AND teaches.course_id=courses.id AND calendars.week LIKE ?',[$opuser,$stage,$week]);
         return response()->json($result);
     }
 }

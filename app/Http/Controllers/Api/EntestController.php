@@ -227,9 +227,30 @@ class EntestController extends Controller
             $judgment=$request->get("judgment");
             $completion=$request->get("completion");
             $answer=$request->get("answer");
-            if(!$choice||!$judgment||!$completion||!$answer){
-                return response()->json(['code'=>400,'msg'=>'请做完试卷后提交']);
+            if(!$choice){
+                return response()->json(['code'=>400,'msg'=>'missing choice']);
             }
+            if(!$judgment){
+                return response()->json(['code'=>400,'msg'=>'missing judgment']);
+            }
+            if(!$completion){
+                return response()->json(['code'=>400,'msg'=>'missing completion']);
+            }
+            if(!$answer){
+                return response()->json(['code'=>400,'msg'=>'missing answer']);
+            }
+            $entest=Enmajortest::select("*")->where(['questype_id'=>$entest_id,"user_id"=>$opuser])->first();
+            if (empty($entest)){
+                return response()->json(['code'=>403,'msg'=>'请先进行入学测试']);
+            }else{
+                if($entest->sumscore)
+                    return response()->json(['code'=>403,'msg'=>'你已经提交测试']);
+            }
+            $entest->choreply=$choice;
+            $entest->judgreply=$judgment;
+            $entest->comrelpy=$completion;
+            $entest->ansreply=$answer;
+            $entest->save();
         }
         return response()->json(['code'=>200,'msg'=>"提交成功"]);
 
