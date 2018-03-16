@@ -192,9 +192,9 @@ class TaskController extends Controller
     }
 
     /**
-     * @api {get} /api/task/deltask/:id   修改作业
+     * @api {get} /api/task/deltask/:id   删除作业
      *
-     * @apiName EditTask
+     * @apiName DelTask
      * @apiGroup Task
      * @apiVersion 1.0.0
      *
