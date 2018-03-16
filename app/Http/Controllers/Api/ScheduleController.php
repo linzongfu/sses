@@ -32,6 +32,7 @@ class ScheduleController extends Controller
                "第十五周","第十六周","第十七周","第十八周",
                "第十九周","第二十周",
            ];
+           $result["class"]=Cllass::select('id','name')->get();
            return response()->json($result);
     }
     /**
@@ -93,7 +94,10 @@ class ScheduleController extends Controller
         if(!$class){
             if (!$opuser) return response()->json(["code"=>403,"msg"=>"class information loss"]);
             $class=Cllass::select("id")->where([["headmaster_id","=",$opuser], ["end_at",'>',Carbon::now()]])->get();
-            if($class->count()==0) return response()->json(["code"=>403,"msg"=>"class information loss"]);
+            if($class->count()==0){
+
+                return response()->json(["code"=>403,"msg"=>"class information loss"]);
+            }
             $class = getArraybystr($class,"id")[0];
         }
         if(!$stage||!$week) return response()->json(["code"=>403,"msg"=>"请选择星期和学期"]);
