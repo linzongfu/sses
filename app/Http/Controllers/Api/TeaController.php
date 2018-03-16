@@ -80,8 +80,9 @@ class TeaController extends Controller
         $class=$request->get("classid");
         $course=$request->get("courseid");
         if(!$class||!$course) return response()->json(["code"=>403,"msg"=>"information is wrong"]);
-
-       $result=Teach::where(["teach_id"=>$opuser,"course_id"=>$course,"class_id"=>$class])->get()[0]->calendars()->orderBy("created_at")->get();
+       $tea=Teach::where(["teach_id"=>$opuser,"course_id"=>$course,"class_id"=>$class])->get();
+       if($tea->count()==0) return response()->json(["code"=>403,"msg"=>"无上课信息"]);
+       $result=$tea[0]->calendars()->orderBy("created_at")->get();
        // $result=Teach::find(1)->get();
         return response()->json($result);
     }

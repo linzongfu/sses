@@ -34,6 +34,7 @@ Route::group([
 
     $app->get('/Schedule/index','ScheduleController@index');
     $app->post('/Schedule/show','ScheduleController@ShowByTeacher');
+    $app->post('/Schedule/ShowStudent','ScheduleController@ShowByStudent');
 
 
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
