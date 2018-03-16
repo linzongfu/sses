@@ -36,6 +36,12 @@ Route::group([
     $app->post('/Schedule/show','ScheduleController@ShowByTeacher');
     $app->post('/Schedule/ShowStudent','ScheduleController@ShowByStudent');
 
+    $app->get('/task/index','TaskController@index');
+    $app->post('/task/showlist','TaskController@showlist');
+    $app->post('/task/addtask','TaskController@addtask');
+    $app->get('/task/deltask/{id}','TaskController@delstask');
+    $app->post('/task/edittask/{id}','TaskController@edittask');
+
 
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');

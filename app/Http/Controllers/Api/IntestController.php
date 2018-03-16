@@ -7,5 +7,7 @@ use App\Http\Controllers\Controller;
 
 class IntestController extends Controller
 {
+  public  function  index(){
 
+  }
 }
