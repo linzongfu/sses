@@ -61,7 +61,7 @@ class TaskController extends Controller
      * @apiParam {int}  Teach_id 任课教学id
      *
      * @apiSuccess {String} data
-     * @apiSampleRequest /api/EnTest/:id
+     * @apiSampleRequest /api/task/showlist
      */
     public  function  showlist(Request $request){
         $opuser=$request->header("opuser");
@@ -99,7 +99,7 @@ class TaskController extends Controller
      * @apiParam {string}  Task_Endtime 作业结束提交时间
      *
      * @apiSuccess {String} data
-     * @apiSampleRequest /api/EnTest/:id
+     * @apiSampleRequest /api/task/addtask
      */
     public  function  addtask(Request $request){
         $opuser=$request->header("opuser");
@@ -151,7 +151,7 @@ class TaskController extends Controller
      * @apiParam {string}  Task_Endtime 新作业结束提交时间
      *
      * @apiSuccess {String} data
-     * @apiSampleRequest /api/EnTest/:id
+     * @apiSampleRequest /api/task/edittask/:id
      */
 
     public  function  edittask($id,Request $request){
@@ -205,7 +205,7 @@ class TaskController extends Controller
      * }
      *
      * @apiSuccess {String} data
-     * @apiSampleRequest /api/EnTest/:id
+     * @apiSampleRequest /api/task/deltask/:id
      */
     public  function  delstask($id,Request $request){
         $opuser=$request->header("opuser");
