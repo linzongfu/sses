@@ -53,12 +53,12 @@ class TaskingController extends Controller
         $teach_id=$request->get("Teach_id");
 
         if(!$teach_id) {
-            $Task["Implement"]=Task::select('id','name')->where("starttime","<",$nowdata)->where("endtime",">",$nowdata)->whereIn("teach_id",getArraybystr($teach,"id"))->get();
-            $Task["End"]=Task::select('id','name')->where("starttime","<",$nowdata)->where("endtime","<",$nowdata)->whereIn("teach_id",getArraybystr($teach,"id"))->get();
+            $Task["Implement"]=Task::select('id','name','starttime','endtime')->where("starttime","<",$nowdata)->where("endtime",">",$nowdata)->whereIn("teach_id",getArraybystr($teach,"id"))->get();
+            $Task["End"]=Task::select('id','name','starttime','endtime')->where("starttime","<",$nowdata)->where("endtime","<",$nowdata)->whereIn("teach_id",getArraybystr($teach,"id"))->get();
            //return $teach_id;
         }else{
-            $Task["Implement"]=Task::select('id','name')->where("starttime","<",$nowdata)->where("endtime",">",$nowdata)->whereIn("teach_id",[$teach_id])->get();
-            $Task["End"]=Task::select('id','name')->where("starttime","<",$nowdata)->where("endtime","<",$nowdata)->whereIn("teach_id",[$teach_id])->get();
+            $Task["Implement"]=Task::select('id','name','starttime','endtime')->where("starttime","<",$nowdata)->where("endtime",">",$nowdata)->whereIn("teach_id",[$teach_id])->get();
+            $Task["End"]=Task::select('id','name','starttime','endtime')->where("starttime","<",$nowdata)->where("endtime","<",$nowdata)->whereIn("teach_id",[$teach_id])->get();
 
         }
         $result["Task"]=$Task;
@@ -126,6 +126,10 @@ class TaskingController extends Controller
         $task_id=$request->get("Task_id");
         $answer=$request->get("Answer");
         if(!$task_id||!$answer) return response()->json(["code"=>403,"msg"=>"pleace enter Task_id and Answer"]);
+
+        $task=Task::find($task_id);
+        $date=Carbon::now();
+        if($task->starttime>$date||$task->endtime<$date) return response()->json(["code"=>403,"msg"=>"Current time is not allowed to submit"]);
 
         try{
             $tasking=Tasking::where("task_id",$task_id)->where("user_id",$opuser);
