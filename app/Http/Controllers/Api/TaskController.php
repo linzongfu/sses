@@ -219,8 +219,6 @@ class TaskController extends Controller
 
       $IsAccess=Teach::where(["id"=>$Task->teach_id,"teach_id"=>$opuser])->get();
       if($IsAccess->count()==0) return response()->json(["code"=>403,"msg"=>"Unlawful access"]);
-
-
         try{
             $Task=Task::find($id);
             $Task->status=0;
@@ -231,5 +229,4 @@ class TaskController extends Controller
         }
         return response()->json(["code"=>200,"msg"=>" delete task sucess"]);
     }
-
 }

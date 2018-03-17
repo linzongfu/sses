@@ -42,6 +42,10 @@ Route::group([
     $app->get('/task/deltask/{id}','TaskController@delstask');
     $app->post('/task/edittask/{id}','TaskController@edittask');
 
+    $app->get('/tasking/index','TaskingController@index');
+    $app->get('/tasking/show/{id}','TaskingController@show');
+    $app->post('/tasking/add','TaskingController@add');
+    $app->get('/tasking/showMyTask','TaskingController@showMyTask');
 
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');

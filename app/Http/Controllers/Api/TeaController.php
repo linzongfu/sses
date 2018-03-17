@@ -130,13 +130,5 @@ class TeaController extends Controller
     }
 
 
-    public function schedule(Request $request){
-        $opuser=$request->header("opuser");
-        // dd($opuser);
-        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
-        if(!in_array(4,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
 
-
-
-    }
 }
