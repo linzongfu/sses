@@ -53,12 +53,12 @@ class TaskingController extends Controller
         $teach_id=$request->get("Teach_id");
 
         if(!$teach_id) {
-            $Task["进行中"]=Task::select('id','name')->where("starttime","<",$nowdata)->where("endtime",">",$nowdata)->whereIn("teach_id",getArraybystr($teach,"id"))->get();
-            $Task["已结束"]=Task::select('id','name')->where("starttime","<",$nowdata)->where("endtime","<",$nowdata)->whereIn("teach_id",getArraybystr($teach,"id"))->get();
+            $Task["Implement"]=Task::select('id','name')->where("starttime","<",$nowdata)->where("endtime",">",$nowdata)->whereIn("teach_id",getArraybystr($teach,"id"))->get();
+            $Task["End"]=Task::select('id','name')->where("starttime","<",$nowdata)->where("endtime","<",$nowdata)->whereIn("teach_id",getArraybystr($teach,"id"))->get();
            //return $teach_id;
         }else{
-            $Task["进行中"]=Task::select('id','name')->where("starttime","<",$nowdata)->where("endtime",">",$nowdata)->whereIn("teach_id",[$teach_id])->get();
-            $Task["已结束"]=Task::select('id','name')->where("starttime","<",$nowdata)->where("endtime","<",$nowdata)->whereIn("teach_id",[$teach_id])->get();
+            $Task["Implement"]=Task::select('id','name')->where("starttime","<",$nowdata)->where("endtime",">",$nowdata)->whereIn("teach_id",[$teach_id])->get();
+            $Task["End"]=Task::select('id','name')->where("starttime","<",$nowdata)->where("endtime","<",$nowdata)->whereIn("teach_id",[$teach_id])->get();
 
         }
         $result["Task"]=$Task;
@@ -93,7 +93,7 @@ class TaskingController extends Controller
         $task=Task::find($id);
         $tasking=Tasking::where("task_id",$id)->where("user_id",$opuser)->get()->count();
          $result["task"]=$task;
-         $result["是否提交"]=$tasking>0?"是":"否";
+         $result["status"]=$tasking>0?"1":"0";
         return response()->json($result);
     }
 

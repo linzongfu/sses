@@ -273,7 +273,7 @@ class TaskController extends Controller
             ->select('taskings.id','taskings.status','taskings.score','users.Noid','users.name')
             ->get();
         $students=getArraybystr($result["已交"],"Noid");
-        $result["未交"]=User::select("Noid",'name')->where("class_id",$Teach->class_id)->whereNotIn('Noid',$students)->get();
+        $result["Unsubmitted"]=User::select("Noid",'name')->where("class_id",$Teach->class_id)->whereNotIn('Noid',$students)->get();
 
         return response()->json($result);
     }
