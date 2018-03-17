@@ -42,6 +42,10 @@ Route::group([
     $app->get('/task/deltask/{id}','TaskController@delstask');
     $app->post('/task/edittask/{id}','TaskController@edittask');
 
+    $app->get('/task/showlist/tasking','TaskController@tasking');
+    $app->get('/task/showlist/tasking/{id}','TaskController@taskingshow');
+    $app->post('/task/showlist/tasking/{id}/correct','TaskController@correct');
+
     $app->get('/tasking/index','TaskingController@index');
     $app->get('/tasking/show/{id}','TaskingController@show');
     $app->post('/tasking/add','TaskingController@add');
