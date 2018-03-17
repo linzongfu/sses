@@ -51,6 +51,11 @@ Route::group([
     $app->post('/tasking/add','TaskingController@add');
     $app->get('/tasking/showMyTask','TaskingController@showMyTask');
 
+    $app->get('/selection/index','SelectionController@index');
+    $app->get('/selection/index/{id}','SelectionController@show');
+    $app->post('/selection/add','SelectionController@add');
+    $app->get('/selection/del/{id}','SelectionController@del');
+
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');
     $app->middleware('auth:api')->get('/user', function (Request $request) {
