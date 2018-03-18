@@ -267,12 +267,12 @@ class TaskController extends Controller
         $Teach=Teach::find($Task->teach_id);
         if(!$Teach) return response()->json(["code"=>403,"msg"=>"pleace Check Enter"]);
 
-        $result["已交"]=Tasking::where("task_id",$Task_id)
+        $result["HasSubmitted"]=Tasking::where("task_id",$Task_id)
             ->leftJoin("users","taskings.user_id",'=','users.Noid')
             //->select("taskings.*",'users.Noid','users.name')
             ->select('taskings.id','taskings.status','taskings.score','users.Noid','users.name')
             ->get();
-        $students=getArraybystr($result["已交"],"Noid");
+        $students=getArraybystr($result["HasSubmitted"],"Noid");
         $result["Unsubmitted"]=User::select("Noid",'name')->where("class_id",$Teach->class_id)->whereNotIn('Noid',$students)->get();
 
         return response()->json($result);
