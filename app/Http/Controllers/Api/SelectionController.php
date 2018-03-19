@@ -34,11 +34,23 @@ class SelectionController extends Controller
         if(!in_array(7,getfuncby($opuser)))
             return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
         $date=Carbon::now();
-        $result["Current"]=Selection::where("teacher_id",$opuser)->where("starttime",'<',$date)->where('endtime','>',$date)->get();
-        $result["Future"]=Selection::where("teacher_id",$opuser)->where('starttime','>',$date)->get();
-        $result["History"]=Selection::where("teacher_id",$opuser)->where('endtime','<',$date)->get();
+        $result["Current"]=Selection::where("publish_id",$opuser)->where("starttime",'<',$date)->where('endtime','>',$date)->where("status",1)
+            ->leftJoin("users","selections.publish_id",'=','users.Noid')
+            ->leftJoin("classs","selections.class_id",'=','classs.id')
+            ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name')
+            ->get();
+        $result["Future"]=Selection::where("publish_id",$opuser)->where('starttime','>',$date)->where("status",1)->leftJoin("users","selections.publish_id",'=','users.Noid')
+            ->leftJoin("classs","selections.class_id",'=','classs.id')
+            ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name')
+            ->get();;
+        $result["History"]=Selection::where("publish_id",$opuser)->where('endtime','<',$date)->where("status",1)->leftJoin("users","selections.publish_id",'=','users.Noid')
+            ->leftJoin("classs","selections.class_id",'=','classs.id')
+            ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name')
+            ->get();;
         return response()->json($result);
     }
+
+
     /**
      * @api {get} /api/selection/index/:id 查看选举结果
      *
@@ -62,6 +74,9 @@ class SelectionController extends Controller
         if(!in_array(7,getfuncby($opuser)))
             return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
 
+       $selection=Selection::find($id);
+       if(!$selection) return response()->json(["code"=>403,"msg"=>"Parameter id is error"]);
+       if($selection->status==0) return response()->json(["code"=>403,"msg"=>"Parameter id is error"]);
 
         $vote=Vote::select("std_id",\DB::raw('count(id) as num'))->where("selection_id",$id)->groupBy('std_id')
             ->orderBy('num','desc')
@@ -102,7 +117,8 @@ class SelectionController extends Controller
            if($selection->publish_id!=$opuser)return response()->json(["code"=>403,"msg"=>"lllegal visit"]);
        }
        try{
-           $selection->delete();
+           $selection->status=0;
+           $selection->save();
            return response()->json(["code"=>200,"msg"=>"del the success of the selection"]);
        }
        catch (\Exception $e){
@@ -156,7 +172,7 @@ class SelectionController extends Controller
         try{
             $selection=new  Selection();
             $selection->class_id=$class_id;
-            $selection->teacher_id=$opuser;
+            $selection->publish_id=$opuser;
             $selection->name=$name;
             $selection->maxvote=$maxvote;
             $selection->starttime=$starttime;

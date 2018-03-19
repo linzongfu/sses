@@ -56,6 +56,11 @@ Route::group([
     $app->post('/selection/add','SelectionController@add');
     $app->get('/selection/del/{id}','SelectionController@del');
 
+
+    $app->get('/vote/index','VoteController@index');
+    $app->get('/vote/index/{id}','VoteController@show');
+    $app->get('/vote/voting/{id}','VoteController@add');
+
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');
     $app->middleware('auth:api')->get('/user', function (Request $request) {
