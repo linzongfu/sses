@@ -59,7 +59,7 @@ Route::group([
 
     $app->get('/vote/index','VoteController@index');
     $app->get('/vote/index/{id}','VoteController@show');
-    $app->get('/vote/voting/{id}','VoteController@add');
+    $app->post('/vote/voting/{id}','VoteController@add');
 
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');

@@ -89,6 +89,58 @@ class VoteController extends Controller
     }
 
 
+    /**
+     * @api {post} /api/vote/voting/:id  学生投票ing
+     *
+     * @apiName Voting
+     * @apiGroup Selection
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiParam {string}  students 被票的人1,2,3
+     *
+     * @apiSuccess {string} data
+     * @apiSampleRequest /api/vote/voting/:id
+     */
+    public function  add($id,Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
 
+        if(!in_array(8,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $selection=Selection::find($id);
+        if(!$selection) return response()->json(["code"=>403,"msg"=>"Selection id is error"]);
+        if($selection->status==0) return response()->json(["code"=>403,"msg"=>"Selection id is error"]);
+
+        $user=User::where("Noid",$opuser)->first();
+        if(!$user) return response()->json(["code"=>403,"msg"=>"User information id is error"]);
+        if($user->class_id!=$selection->class_id)  return response()->json(["code"=>403,"msg"=>"You are not the student of the class"]);
+
+        if (Vote::where(["forstd_id"=>$opuser,"selection_id"=>$id])->count()>0) return response()->json(["code"=>403,"msg"=>"You have already voted"]);
+
+        $stu=$request->get("students");
+        if(!$stu) return  response()->json(["code"=>403,"msg"=>"No vote"]);
+        $stu=explode(",",$request->get("students"));
+        if(count($stu)>$selection->maxvote) return  response()->json(["code"=>403,"msg"=>"You are too many vote"]);
+
+         try{
+             $t=0;
+            for($i=0;$i<count($stu);$i++){
+                if($stu[$i]){
+                    $vote=new Vote();
+                    $vote->std_id=$stu[$i];
+                    $vote->forstd_id=$opuser;
+                    $vote->selection_id=$id;
+                    $vote->save();
+                }
+            }
+            return response()->json(["code"=>403,"msg"=>"Vote success"]);;
+         }
+         catch(\Exception $e){
+             return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
+         }
+    }
 
 }
