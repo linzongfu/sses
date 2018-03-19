@@ -89,39 +89,6 @@ class VoteController extends Controller
     }
 
 
-    /**
-     * @api {post} /api/vote/voting/:id  学生投票
-     *
-     * @apiName Voting
-     * @apiGroup Selection
-     * @apiVersion 1.0.0
-     *
-     * @apiHeader (opuser) {String} opuser
-     *
-     * @apiParam {array}   新作业名
-     * @apiParam {string}  Task_Content 新作业内容
-     * @apiParam {string}  Task_starttime 新作业最早提交时间
-     *
-     * @apiSuccess {string} data
-     * @apiSampleRequest /api/vote/voting/:id
-     */
-    public function  add($id,Request $request){
-        $opuser=$request->header("opuser");
-        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
 
-        if(!in_array(8,getfuncby($opuser)))
-            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
-
-        $selection=Selection::find($id);
-        if(!$selection) return response()->json(["code"=>403,"msg"=>"Parameter id is error"]);
-        if($selection->status==0) return response()->json(["code"=>403,"msg"=>"Parameter id is error"]);
-
-        $vote=Vote::select("std_id",\DB::raw('count(id) as num'))->where("selection_id",$id)->groupBy('std_id')
-            ->orderBy('num','desc')
-            ->get();
-        $result["Vote"]=$vote;
-        $result["Is_Voted"]=Vote::where(["std_id"=>$opuser,"selection_id"=>$id])->count();
-        return response()->json($result);
-    }
 
 }
