@@ -37,15 +37,15 @@ class SelectionController extends Controller
         $result["Current"]=Selection::where("publish_id",$opuser)->where("starttime",'<',$date)->where('endtime','>',$date)->where("status",1)
             ->leftJoin("users","selections.publish_id",'=','users.Noid')
             ->leftJoin("classs","selections.class_id",'=','classs.id')
-            ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name')
+            ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name','selections.starttime','selections.endtime')
             ->get();
         $result["Future"]=Selection::where("publish_id",$opuser)->where('starttime','>',$date)->where("status",1)->leftJoin("users","selections.publish_id",'=','users.Noid')
             ->leftJoin("classs","selections.class_id",'=','classs.id')
-            ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name')
+            ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name','selections.starttime','selections.endtime')
             ->get();;
         $result["History"]=Selection::where("publish_id",$opuser)->where('endtime','<',$date)->where("status",1)->leftJoin("users","selections.publish_id",'=','users.Noid')
             ->leftJoin("classs","selections.class_id",'=','classs.id')
-            ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name')
+            ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name','selections.starttime','selections.endtime')
             ->get();;
         return response()->json($result);
     }
@@ -92,10 +92,6 @@ class SelectionController extends Controller
      * @apiVersion 1.0.0
      *
      * @apiHeader (opuser) {String} opuser
-     * @apiHeaderExample {json} Header-Example:
-     * {
-     *      opuser
-     * }
      *
      * @apiSuccess {String} data
      * @apiSampleRequest /api/selection/del/:id

@@ -62,6 +62,8 @@ Route::group([
     $app->post('/vote/voting/{id}','VoteController@add');
     $app->get('/vote/list/{id}','VoteController@listing');
 
+    $app->get('/headmaster/index','HeadmasterController@index');
+
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');
     $app->middleware('auth:api')->get('/user', function (Request $request) {
