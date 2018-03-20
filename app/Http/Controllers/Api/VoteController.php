@@ -91,6 +91,40 @@ class VoteController extends Controller
 
 
     /**
+     * @api {get} /api/vote/list/:id  学生投票选择
+     *
+     * @apiName Votelist
+     * @apiGroup Selection
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     *
+     * @apiSuccess {string} data
+     * @apiSampleRequest /api/vote/list/:id
+     */
+    public function  listing($id,Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+
+        if(!in_array(8,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $selection=Selection::find($id);
+        if(!$selection) return response()->json(["code"=>403,"msg"=>"Selection id is error"]);
+        if($selection->status==0) return response()->json(["code"=>403,"msg"=>"Selection id is error"]);
+
+        $user=User::where('Noid',$opuser)->first();
+        if(!$user) return response()->json(["code"=>403,"msg"=>"pleace log in again"]);
+
+        if($user->class_id!=$selection->class_id) return response()->json(["code"=>403,"msg"=>"You can't take part in the vote in other classes"]);
+
+        $users=User::where("class_id",$user->class_id)->select('Noid','name')->get();
+       return response()->json($users);
+
+    }
+
+    /**
      * @api {post} /api/vote/voting/:id  学生投票ing
      *
      * @apiName Voting

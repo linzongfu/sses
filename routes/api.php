@@ -60,6 +60,7 @@ Route::group([
     $app->get('/vote/index','VoteController@index');
     $app->get('/vote/index/{id}','VoteController@show');
     $app->post('/vote/voting/{id}','VoteController@add');
+    $app->get('/vote/list/{id}','VoteController@listing');
 
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');
