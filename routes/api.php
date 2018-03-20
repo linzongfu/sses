@@ -64,6 +64,9 @@ Route::group([
 
     $app->get('/headmaster/index','HeadmasterController@index');
 
+
+    $app->get('/accident/{id}','AccidentController@index');
+
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');
     $app->middleware('auth:api')->get('/user', function (Request $request) {

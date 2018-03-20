@@ -120,7 +120,9 @@ class VoteController extends Controller
         if($user->class_id!=$selection->class_id) return response()->json(["code"=>403,"msg"=>"You can't take part in the vote in other classes"]);
 
         $users=User::where("class_id",$user->class_id)->select('Noid','name')->get();
-       return response()->json($users);
+        $result["user"]=$users;
+        $result["maxvote"]=$selection->maxvote;
+       return response()->json($result);
 
     }
 

@@ -12,7 +12,7 @@ class HeadmasterController extends Controller
 {
 
     /**
-     * @api {get} /api/headmaster/index  课表选择界面
+     * @api {get} /api/headmaster/index  班主任界面
      *
      * @apiName  index
      * @apiGroup Headmaster
@@ -26,11 +26,8 @@ class HeadmasterController extends Controller
     public function index(Request $request){
         $opuser=$request->header("opuser");
         if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
-
         if(!in_array(9,getfuncby($opuser)))
             return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
-
-
 
         $time=Carbon::now();
         $class=Cllass::where("headmaster_id",$opuser)->where("end_at",'>',$time)->get();
@@ -41,16 +38,14 @@ class HeadmasterController extends Controller
             $class=Cllass::where("assistant_id",$opuser)->where("end_at",'>',$time)->first();
             if (!$class) return response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
         }
-
-
-        return $class->id;
+    //    return $class->id;
         $user=User::where("users.class_id",$class->id)
-           // ->leftJoin("accidents","users.Noid","accidents.student_id")
-            //->groupBy("accidents.student_id",'users.name')
-            //->select('accidents.student_id','users.name',\DB::raw('SUM(accidents.score) as score'))
+           ->leftJoin("accidents","users.Noid","accidents.student_id")
+            ->groupBy("users.Noid",'users.name')
+            ->select('users.Noid','users.name',\DB::raw('SUM(accidents.score) as score'))
             ->get();
         return $user;
-
-
     }
+
+
 }
