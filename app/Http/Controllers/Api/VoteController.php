@@ -41,15 +41,15 @@ class VoteController extends Controller
              $date=Carbon::now();
              $result["Current"]=Selection::where("selections.class_id",$user->class_id)->where("starttime",'<',$date)->where('endtime','>',$date)->where("status",1)->leftJoin("users","selections.publish_id",'=','users.Noid')
                  ->leftJoin("classs","selections.class_id",'=','classs.id')
-                 ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name')
+                 ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name','selections.starttime','selections.endtime')
                  ->get();
              $result["Future"]=Selection::where("selections.class_id",$user->class_id)->where('starttime','>',$date)->where("status",1)->leftJoin("users","selections.publish_id",'=','users.Noid')
                  ->leftJoin("classs","selections.class_id",'=','classs.id')
-                 ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name')
+                 ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name','selections.starttime','selections.endtime')
                  ->get();
              $result["History"]=Selection::where("selections.class_id",$user->class_id)->where('endtime','<',$date)->where("status",1)->leftJoin("users","selections.publish_id",'=','users.Noid')
                  ->leftJoin("classs","selections.class_id",'=','classs.id')
-                 ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name')
+                 ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name','selections.starttime','selections.endtime')
                  ->get();
              return response()->json($result);
     }
@@ -80,8 +80,9 @@ class VoteController extends Controller
         if(!$selection) return response()->json(["code"=>403,"msg"=>"Parameter id is error"]);
         if($selection->status==0) return response()->json(["code"=>403,"msg"=>"Parameter id is error"]);
 
-        $vote=Vote::select("std_id",\DB::raw('count(id) as num'))->where("selection_id",$id)->groupBy('std_id')
+        $vote=Vote::select("std_id",'users.name as name',\DB::raw('count(votes.id) as num'))->where("selection_id",$id)->groupBy('std_id','users.name')
             ->orderBy('num','desc')
+            ->leftJoin('users','votes.std_id','users.Noid')
             ->get();
         $result["Vote"]=$vote;
         $result["Is_Voted"]=Vote::where(["std_id"=>$opuser,"selection_id"=>$id])->count();

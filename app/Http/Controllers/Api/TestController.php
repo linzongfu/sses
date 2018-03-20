@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Enmajortest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Question;
@@ -11,8 +12,8 @@ use App\Models\Qustype;
 class TestController extends Controller
 {
     public function index(){
-       $q= Qustype::where('pid',0)->get();
-        return response()->json($q);
+       $e=Enmajortest::find(16);
+       return json_decode($e->choreply,true);
     }
     public function EnTest($pid){
         $a= Qustype::where('pid',$pid)->get();
