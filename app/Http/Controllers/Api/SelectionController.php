@@ -78,7 +78,9 @@ class SelectionController extends Controller
        if(!$selection) return response()->json(["code"=>403,"msg"=>"Parameter id is error"]);
        if($selection->status==0) return response()->json(["code"=>403,"msg"=>"Parameter id is error"]);
 
-        $vote=Vote::select("std_id",\DB::raw('count(id) as num'))->where("selection_id",$id)->groupBy('std_id')
+        $vote=Vote::select("std_id",'users.name',\DB::raw('count(votes.id) as num'))->where("selection_id",$id)
+            ->leftJoin('users','votes.std_id','users.Noid')
+            ->groupBy('std_id','users.name')
             ->orderBy('num','desc')
             ->get();
         return response()->json($vote);

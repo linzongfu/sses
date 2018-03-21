@@ -35,7 +35,9 @@ class AccidentController extends Controller
         if($user->class_id!=$class->id) return response()->json(["code"=>403,'msg'=>"You are not the headteacher or assistant can't continue to operate"]);
 
         $accident=Accident::where("accidents.student_id",$id)
-            //->leftJoin("user")
+            ->leftJoin("user","accidents.student_id")
+            ->get();
+
 
         return $user;
     }
