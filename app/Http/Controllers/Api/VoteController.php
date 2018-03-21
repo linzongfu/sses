@@ -85,7 +85,7 @@ class VoteController extends Controller
             ->leftJoin('users','votes.std_id','users.Noid')
             ->get();
         $result["Vote"]=$vote;
-        $result["Is_Voted"]=Vote::where(["std_id"=>$opuser,"selection_id"=>$id])->count();
+        $result["Is_Voted"]=Vote::where(["forstd_id"=>$opuser,"selection_id"=>$id])->count();
         return response()->json($result);
     }
 
