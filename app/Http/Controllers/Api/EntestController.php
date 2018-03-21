@@ -21,10 +21,6 @@ class EntestController extends Controller
      * @apiVersion 1.0.0
      *
      * @apiHeader (opuser) {String} opuser
-     * @apiHeaderExample {json} Header-Example:
-     * {
-     *      opuser
-     * }
      *
      * @apiSuccess {array} data
      * @apiSampleRequest /api/ChoiceTest
@@ -45,10 +41,6 @@ class EntestController extends Controller
      * @apiVersion 1.0.0
      *
      * @apiHeader (opuser) {String} opuser
-     * @apiHeaderExample {json} Header-Example:
-     * {
-     *      opuser
-     * }
      *
      * @apiSuccess {String} data
      * @apiSampleRequest /api/EnTest/:id
@@ -178,10 +170,6 @@ class EntestController extends Controller
      * @apiVersion 1.0.0
      *
      * @apiHeader (opuser) {String} opuser
-     * @apiHeaderExample {json} Header-Example:
-     * {
-     *      opuser
-     * }
      *
      * @apiParam {int}  result 结果标签id
      * @apiParam {int}  entest_id 测试类型id

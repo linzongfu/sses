@@ -43,10 +43,6 @@ class ScheduleController extends Controller
      * @apiVersion 1.0.0
      *
      * @apiHeader (opuser) {String} opuser
-     * @apiHeaderExample {json} Header-Example:
-     * {
-     *      opuser
-     * }
      *
      * @apiParam {int}  stage 学年阶段
      * @apiParam {string}  week 这几周的课表
@@ -74,10 +70,6 @@ class ScheduleController extends Controller
      * @apiVersion 1.0.0
      *
      * @apiHeader (opuser) {String} opuser
-     * @apiHeaderExample {json} Header-Example:
-     * {
-     *      opuser
-     * }
      *
      * @apiParam {int}  stage 学年阶段
      * @apiParam {string}  week 这几周的课表

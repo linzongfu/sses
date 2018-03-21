@@ -56,10 +56,6 @@ class TaskController extends Controller
      * @apiVersion 1.0.0
      *
      * @apiHeader (opuser) {String} opuser
-     * @apiHeaderExample {json} Header-Example:
-     * {
-     *      opuser
-     * }
      * @apiParam {int}  Teach_id 任课教学id
      *
      * @apiSuccess {String} data
@@ -90,10 +86,7 @@ class TaskController extends Controller
      * @apiVersion 1.0.0
      *
      * @apiHeader (opuser) {String} opuser
-     * @apiHeaderExample {json} Header-Example:
-     * {
-     *      opuser
-     * }
+     *
      * @apiParam {int}  Teach_id 任课教学id
      * @apiParam {string}  Task_Name 作业名
      * @apiParam {string}  Task_Content 作业内容
@@ -143,10 +136,6 @@ class TaskController extends Controller
      * @apiVersion 1.0.0
      *
      * @apiHeader (opuser) {String} opuser
-     * @apiHeaderExample {json} Header-Example:
-     * {
-     *      opuser
-     * }
      * @apiParam {string}  Task_Name 新作业名
      * @apiParam {string}  Task_Content 新作业内容
      * @apiParam {string}  Task_starttime 新作业最早提交时间

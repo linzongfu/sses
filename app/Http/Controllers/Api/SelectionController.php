@@ -19,10 +19,6 @@ class SelectionController extends Controller
      * @apiVersion 1.0.0
      *
      * @apiHeader (opuser) {String} opuser
-     * @apiHeaderExample {json} Header-Example:
-     * {
-     *      opuser
-     * }
      *
      * @apiSuccess {String} data
      * @apiSampleRequest /api/selection/index
@@ -59,10 +55,6 @@ class SelectionController extends Controller
      * @apiVersion 1.0.0
      *
      * @apiHeader (opuser) {String} opuser
-     * @apiHeaderExample {json} Header-Example:
-     * {
-     *      opuser
-     * }
      *
      * @apiSuccess {String} data
      * @apiSampleRequest /api/selection/index/:id
@@ -134,10 +126,6 @@ class SelectionController extends Controller
      * @apiVersion 1.0.0
      *
      * @apiHeader (opuser) {String} opuser
-     * @apiHeaderExample {json} Header-Example:
-     * {
-     *      opuser
-     * }
      *
      * @apiParam{int} MaxVote 最大投票数
      * @apiParam{string} Name 选举标题

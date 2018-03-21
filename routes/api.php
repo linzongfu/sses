@@ -65,7 +65,9 @@ Route::group([
     $app->get('/headmaster/index','HeadmasterController@index');
 
 
-    $app->get('/accident/{id}','AccidentController@index');
+    $app->get('/accident/{id}','AccidentController@show');
+    $app->post('/accident/{id}/add','AccidentController@add');
+    $app->get('/accident/del/{id}','AccidentController@del');
 
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');
