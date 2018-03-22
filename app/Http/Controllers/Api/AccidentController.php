@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Accident;
+use App\Models\Accidtype;
 use App\Models\Cllass;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -49,8 +50,9 @@ class AccidentController extends Controller
         $resutl["Accidents"]=Accident::where("accidents.student_id",$id)
             ->leftJoin("users","accidents.editor_id","users.Noid")
             ->where("accidents.status",1)
-            ->select("accidents.reason",'accidents.score','accidents.created_at','users.name as editor')
+            ->select('accidents.id',"accidents.reason",'accidents.score','accidents.created_at','users.name as editor')
             ->skip($start)->take($limit)
+            ->orderBy('created_at','desc')
             ->get();
         return response()->json($resutl);
     }
@@ -64,8 +66,8 @@ class AccidentController extends Controller
      * @apiVersion 1.0.0
      * @apiHeader (opuser) {String} opuser
      *
-     * @apiParam {float}  score 分数
-     * @apiParam {string}  reason
+     * @apiParam {int}  Score_Type 分数类别
+     * @apiParam {string}  Detail 详情
      *
      * @apiSuccess {String} data
      * @apiSampleRequest /api/accident/:Noid/add
@@ -84,17 +86,19 @@ class AccidentController extends Controller
         if($user->class_id!=$class->id) return response()->json(["code"=>403,'msg'=>"You are not the headteacher or assistant can't continue to operate"]);
 
 
-        $score=$request->get("score");
-        $reason=$request->get("reason");
-        if(!$score||!$reason) return response()->json(["code"=>403,"msg"=>"missing score and reason"]);
+        $scoreType=$request->get("Score_Type");
+        $detail=$request->get("Detail");
+        if(!$scoreType||!$detail) return response()->json(["code"=>403,"msg"=>"missing scoreType and detail"]);
+        $scores=Accidtype::find($scoreType);
+        if(!$scores)return response()->json(["code"=>403,"msg"=>"Score_Type error"]);
 
         try{
             $accident=new Accident();
             $accident->student_id=$id;
             $accident->editor_id=$opuser;
-            $accident->score=$score;
-            $accident->reason=$reason;
-
+            $accident->accidtype_id=$scores->id;
+            $accident->score=$scores->score;
+            $accident->reason=$detail;
             $accident->save();
             return response()->json(["code"=>200,"msg"=>"add accident success"]);
 
@@ -103,6 +107,44 @@ class AccidentController extends Controller
             return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
         }
         return response()->json($resutl);
+    }
+
+    /**
+     * @api {get}  /api/accident/choice  事况添加选择
+     *
+     * @apiName  choice
+     * @apiGroup Accident
+     * @apiVersion 1.0.0
+     * @apiHeader (opuser) {String} opuser
+     *
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/accident/choice
+     */
+    public function choice(Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(10,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+       $choiseList=Accidtype::all()->toArray();
+        $choiseList=$this->getTree($choiseList,0);
+        return response()->json($choiseList);
+    }
+    public function getTree($data, $pId)
+    {
+        $tree = '';
+        foreach($data as $k => $v)
+        {
+
+            if($v['pid'] == $pId)
+            {         //父亲找到儿子
+                $v['subordinate'] = $this->getTree($data, $v['id']);
+                $tree[] = $v;
+                unset($data[$k]);
+            }
+        }
+        return $tree;
     }
 
 
@@ -131,6 +173,7 @@ class AccidentController extends Controller
        if(!$student) return response()->json(["code"=>403,"msg"=>"this accident are wrroy"]);
 
        if(!($student->headmaster_id==$opuser||$student->assistant_id==$opuser)) return  response()->json(["code"=>403,"msg"=>"forbid access"]);
+
 
        try{
            $accident->status=0;

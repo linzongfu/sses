@@ -25,6 +25,7 @@ Route::group([
     $app->get('/ChoiceTest', 'EntestController@index');
     $app->get('/EnTest/{id}', 'EntestController@Entest');
     $app->post('/EnTest/Submit', 'EntestController@store');
+    $app->post('/EnTest/show', 'EntestController@show');
 
 
     $app->get('/teacher/index', 'TeaController@index');
@@ -66,9 +67,11 @@ Route::group([
     $app->get('/headmaster/index','HeadmasterController@index');
 
 
+    $app->get('/accident/choice','AccidentController@choice');
     $app->get('/accident/{id}','AccidentController@show');
     $app->post('/accident/{id}/add','AccidentController@add');
     $app->get('/accident/del/{id}','AccidentController@del');
+
 
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');

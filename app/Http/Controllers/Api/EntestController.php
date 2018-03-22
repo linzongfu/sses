@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Models\Cllass;
 use App\Models\Enmajortest;
 use App\Models\Entesting;
+use App\Models\Label;
 use App\Models\Question;
 use App\Models\Qustype;
 use App\Models\User;
@@ -245,15 +247,64 @@ class EntestController extends Controller
 
     }
 
+
     /**
-     * Display the specified resource.
+     * @api {post} /api/EnTest/show  查看学生入学测试结果
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @apiName show
+     * @apiGroup EntrTest
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiParam {string}  Stud_Noid 学生学号  自己班级学生的学号
+     * @apiParam {int}  Entest_Id 测试类型  性格文理专业测试
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/EnTest/show
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        //
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+
+        if(!in_array(11,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $stud=$request->get("Stud_Noid");
+        $entest_id=$request->get("Entest_Id");
+        if(!$stud||!$entest_id) return response()->json(["code"=>403,"msg"=>"missing Stud_Noid or Entest_id"]);
+
+        $student=User::where("Noid",$stud)->first();
+        if(!$student) return response()->json(["code"=>403,"msg"=>"student information is error"]);
+        $class=Cllass::where("id",$student->class_id)->first();
+
+        if($opuser!=$class->headmaster_id) return response()->json(["code"=>403,"msg"=>"forbid access"]);
+        if($entest_id==1){
+            $result["Test_Name"]=Qustype::find($entest_id);
+            if($student->characterlabel_id) return response()->json(["code"=>403,"msg"=>"this student No character test"]);
+            $result["label"]=Label::find($student->characterlabel_id);
+        }else if($entest_id==3){
+            $result["Test_Name"]=Qustype::find($entest_id);
+            if($student->branchlabel_id) return response()->json(["code"=>403,"msg"=>"this student No thinking test"]);
+            $result["label"]=Label::find($student->branchlabel_id);
+        }else if($entest_id==2){
+            $result["Test_Name"]=Qustype::find($entest_id);
+            if($student->majorlabel_id) return response()->json(["code"=>403,"msg"=>"this student No major test"]);
+
+            $major=Enmajortest::where("user_id",$student->Noid)->first();
+            if(!$major) return response()->json(["code"=>403,"msg"=>"this student No major test"]);
+
+            if(!$major->choicescore||!$major->judgscore||!$major->complescore||!$major->answerscore||!$major->sumscore){
+                return response()->json(["code"=>403,"msg"=>"the student's test paper has not been corrected"]);
+            }
+
+            $result["major"]=$major->$major;
+
+            $result["label"]=Label::find($student->majorlabel_id);
+        }
+
+        return response()->json($result);
     }
 
     /**
