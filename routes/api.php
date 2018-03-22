@@ -59,6 +59,7 @@ Route::group([
 
     $app->get('/vote/index','VoteController@index');
     $app->get('/vote/index/{id}','VoteController@show');
+    $app->get('/vote/isvote/{id}','VoteController@isvote');
     $app->post('/vote/voting/{id}','VoteController@add');
     $app->get('/vote/list/{id}','VoteController@listing');
 

@@ -89,6 +89,31 @@ class VoteController extends Controller
         return response()->json($result);
     }
 
+    /**
+     * @api {get} /api/vote/isvote/:id  学生是否投票
+     *
+     * @apiName IsVote
+     * @apiGroup Selection
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiSuccess {int} Is_Voted 大于0则投过票
+     * @apiSampleRequest /api/vote/isvote/:id
+     */
+    public function  isvote($id,Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+
+        if(!in_array(8,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $selection=Selection::find($id);
+        if(!$selection) return response()->json(["code"=>403,"msg"=>"Parameter id is error"]);
+        if($selection->status==0) return response()->json(["code"=>403,"msg"=>"Parameter id is error"]);
+        $result["Is_Voted"]=Vote::where(["forstd_id"=>$opuser,"selection_id"=>$id])->count();
+        return response()->json($result);
+    }
 
     /**
      * @api {get} /api/vote/list/:id  学生投票选择
