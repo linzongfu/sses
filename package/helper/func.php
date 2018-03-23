@@ -26,7 +26,5 @@ function getfuncby($Noid){
         $funcid=getArraybystr($func,"func_id");
     return $funcid;
 }
-function accessControl($opuser,$access_id){
 
-}
 ?>

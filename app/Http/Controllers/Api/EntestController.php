@@ -12,6 +12,7 @@ use App\Models\Qustype;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Psy\Test\CodeCleaner\MagicConstantsPassTest;
 
 class EntestController extends Controller
 {
@@ -308,27 +309,110 @@ class EntestController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * @api {get} /api/EnTest/Correct/:Noid  请求批改作业
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @apiName Correct
+     * @apiGroup EntrTest
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/EnTest/Correct/:Noid
      */
-    public function edit($id)
+    public function Correct($Noid,Request $request)
     {
-        //
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+
+        if(!in_array(11,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $class=Cllass::where("headmaster_id",$opuser)->first();
+       if(!$class)$class=Cllass::where("assistant_id",$opuser)->first();
+        if(!$class) return response()->json(["code"=>403,'msg'=>"You are not the headteacher or assistant can't continue to operate"]);
+        $user=User::where("Noid",$Noid)->first();
+        if(!$user) return response()->json(["code"=>403,"msg"=>"this student not exist"]);
+        if($user->class_id!=$class->id) return response()->json(["code"=>403,'msg'=>"You are not the headteacher or assistant can't continue to operate"]);
+
+
+        $major_test=Enmajortest::where("user_id",$user->Noid)->first();
+        $major_test->choreply=json_decode($major_test->choreply,true);
+        $major_test->judgreply=json_decode($major_test->judgreply,true);
+        $major_test->comrelpy=json_decode($major_test->comrelpy,true);
+        $major_test->ansreply=json_decode($major_test->ansreply,true);
+        return response()->json($major_test);
+
     }
 
+
     /**
-     * Update the specified resource in storage.
+     * @api {post} /api/EnTest/Corrected/:Noid  批改好作业提交
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @apiName Corrected
+     * @apiGroup EntrTest
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiParam {float}  Com_Score 填空题答案
+     * @apiParam {float}  Ans_Score 问答题分数
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/EnTest/Corrected/:Noid
      */
-    public function update(Request $request, $id)
+    public function Corrected($Noid,Request $request)
     {
-        //
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+
+        if(!in_array(11,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $class=Cllass::where("headmaster_id",$opuser)->first();
+        if(!$class)$class=Cllass::where("assistant_id",$opuser)->first();
+        if(!$class) return response()->json(["code"=>403,'msg'=>"You are not the headteacher or assistant can't continue to operate"]);
+        $user=User::where("Noid",$Noid)->first();
+        if(!$user) return response()->json(["code"=>403,"msg"=>"this student not exist"]);
+        if($user->class_id!=$class->id) return response()->json(["code"=>403,'msg'=>"You are not the headteacher or assistant can't continue to operate"]);
+
+        $major_test=Enmajortest::where("user_id",$user->Noid)->first();
+
+
+
+        $com_score=$request->get("Com_Score");
+        $ans_score=$request->get("Ans_Score");
+        if(!$com_score||!$ans_score) return response()->json(["code"=>403,"msg"=>"pleace enter Com_Score and Ans_Score"]);
+
+        try{
+            if(!$major_test->choicescore){
+                $choreply=json_decode($major_test->choreply,true);
+                $cho_count=count($choreply);
+                $cho_size=0;
+                for($i=0;$i<$cho_count;$i++ )if ($choreply[$i]["answer"]==$choreply[$i]["userAnswer"])$cho_size++;
+                $major_test->choicescore=($cho_size/$cho_count)*100;
+            }
+
+            if(!$major_test->judgscore){
+                $judgreply=json_decode($major_test->judgreply,true);
+                $judg_count=count($judgreply);
+                $judg_size=0;
+                for($i=0;$i<$judg_count;$i++ )if ($judgreply[$i]["answer"]==$choreply[$i]["userAnswer"])$judg_size++;
+                $major_test->judgscore=($judg_size/$judg_count)*100;
+            }
+
+            $major_test->complescore=$com_score;
+            $major_test->answerscore=$ans_score;
+            $major_test->save();
+            return response()->json(["code"=>200,"msg"=>"Correct success"]);
+
+        }catch (\Exception $e){
+            return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
+        }
+
     }
+
 
     /**
      * Remove the specified resource from storage.
