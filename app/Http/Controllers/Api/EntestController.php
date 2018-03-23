@@ -386,25 +386,32 @@ class EntestController extends Controller
         if(!$com_score||!$ans_score) return response()->json(["code"=>403,"msg"=>"pleace enter Com_Score and Ans_Score"]);
 
         try{
+
             if(!$major_test->choicescore){
                 $choreply=json_decode($major_test->choreply,true);
                 $cho_count=count($choreply);
                 $cho_size=0;
                 for($i=0;$i<$cho_count;$i++ )if ($choreply[$i]["answer"]==$choreply[$i]["userAnswer"])$cho_size++;
-                $major_test->choicescore=($cho_size/$cho_count)*100;
-            }
+                $choicescore=($cho_size/$cho_count)*100;
+                $major_test->choicescore=$choicescore;
+            }else $choicescore=$major_test->choicescore;
 
             if(!$major_test->judgscore){
                 $judgreply=json_decode($major_test->judgreply,true);
                 $judg_count=count($judgreply);
                 $judg_size=0;
                 for($i=0;$i<$judg_count;$i++ )if ($judgreply[$i]["answer"]==$choreply[$i]["userAnswer"])$judg_size++;
-                $major_test->judgscore=($judg_size/$judg_count)*100;
-            }
+                $judgscore=($judg_size/$judg_count)*100;
+                $major_test->judgscore=$judgscore;
+            }else $judgscore=$major_test->judgscore;
 
             $major_test->complescore=$com_score;
             $major_test->answerscore=$ans_score;
+            $sumscore=$choicescore*0.3+$judgscore*0.3+$com_score*0.2+$ans_score*0.2;
+            $major_test->sumscore=$sumscore;
             $major_test->save();
+            $user->majorlabel_id=$sumscore>60?21:22;
+            $user->save();
             return response()->json(["code"=>200,"msg"=>"Correct success"]);
 
         }catch (\Exception $e){
