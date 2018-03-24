@@ -21,10 +21,6 @@ class TeaController extends Controller
      * @apiVersion 1.0.0
      *
      * @apiHeader (opuser) {String} opuser
-     * @apiHeaderExample {json} Header-Example:
-     * {
-     *      opuser
-     * }
      *
      * @apiSuccess {String} data
      * @apiSampleRequest /api/teacher/index

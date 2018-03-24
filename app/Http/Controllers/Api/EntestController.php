@@ -9,6 +9,7 @@ use App\Models\Entesting;
 use App\Models\Label;
 use App\Models\Question;
 use App\Models\Qustype;
+use App\Models\Testrule;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -30,7 +31,10 @@ class EntestController extends Controller
      */
     public function  index(Request $request){
         $opuser=$request->header("opuser");
-        accessControl($opuser,6);
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+
+        if(!in_array(6,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
 
        $questypes=Qustype::select("*")->where(["status"=>0,"pid"=>"0"])->get();
        return response()->json($questypes);
@@ -51,7 +55,10 @@ class EntestController extends Controller
     public function Entest($id,Request $request)
     {
         $opuser=$request->header("opuser");
-        accessControl($opuser,6);
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+
+        if(!in_array(6,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
 
         $result=[];
         if ($id==1){  //性格测试
@@ -90,10 +97,12 @@ class EntestController extends Controller
                 $result["questype"]=Qustype::select("*")->where("belongto",$mojor_id)->get()[0];
                 if (!$result["questype"]) return response()->json(["code"=>400,"msg"=>"请联系管理员反馈个人信息"]);
 
-                $entest["choice"]=Qustype::find($mojor_id)->questions()->where("type",0)->orderBy(\DB::raw('RAND()'))->take(10)->get();
-                $entest["judgment"]=Qustype::find($mojor_id)->questions()->where("type",2)->orderBy(\DB::raw('RAND()'))->take(10)->get();;
-                $entest["completion"]=Qustype::find($mojor_id)->questions()->where("type",3)->orderBy(\DB::raw('RAND()'))->take(5)->get();;
-                $entest["answer"]=Qustype::find($mojor_id)->questions()->where("type",4)->orderBy(\DB::raw('RAND()'))->take(5)->get();;
+                $rule=Testrule::find(1);
+
+                $entest["choice"]=Qustype::find($mojor_id)->questions()->where(["type"=>0,"level"=>0])->orderBy(\DB::raw('RAND()'))->take($rule->choice_count)->get();
+                $entest["judgment"]=Qustype::find($mojor_id)->questions()->where(["type"=>2,"level"=>0])->orderBy(\DB::raw('RAND()'))->take($rule->judge_count)->get();
+                $entest["completion"]=Qustype::find($mojor_id)->questions()->where(["type"=>3,"level"=>0])->orderBy(\DB::raw('RAND()'))->take($rule->completion_count)->get();
+                $entest["answer"]=Qustype::find($mojor_id)->questions()->where(["type"=>4,"level"=>0])->orderBy(\DB::raw('RAND()'))->take($rule->answer_count)->get();
                 $result["question"]=$entest;
 
                 $enmajortest=new Enmajortest();
@@ -184,8 +193,10 @@ class EntestController extends Controller
     public function store(Request $request)
     {
         $opuser=$request->header("opuser");
-        accessControl($opuser,6);
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
 
+        if(!in_array(6,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
         $entest_id=$request->get("entest_id");
         if(!$entest_id) return response()->json(['code'=>400,'msg'=>'参数错误']);
         $entest_pid=Qustype::find($entest_id)->pid;
@@ -407,7 +418,8 @@ class EntestController extends Controller
 
             $major_test->complescore=$com_score;
             $major_test->answerscore=$ans_score;
-            $sumscore=$choicescore*0.3+$judgscore*0.3+$com_score*0.2+$ans_score*0.2;
+            $rule=Testrule::find(1);
+            $sumscore=$choicescore*$rule->choice_rate+$judgscore*$rule->judge_rate+$com_score*$rule->completion_rate+$ans_score*$rule->answer_rate;
             $major_test->sumscore=$sumscore;
             $major_test->save();
             $user->majorlabel_id=$sumscore>60?21:22;

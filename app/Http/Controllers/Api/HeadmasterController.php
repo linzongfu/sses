@@ -37,7 +37,6 @@ class HeadmasterController extends Controller
             $class=Cllass::where("assistant_id",$opuser)->where("end_at",'>',$time)->first();
             if (!$class) return response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
         }
-
         $page=$request->get('page');
         $limit=$request->get('limit');
         if(!$limit) $limit=10;
@@ -54,6 +53,34 @@ class HeadmasterController extends Controller
             ->get();
         return $user;
     }
+
+
+    /**
+     * @api {get} /api/headmaster/test  测试
+     *
+     * @apiName  test
+     * @apiGroup Headmaster
+     * @apiVersion 1.0.0
+     * @apiHeader (opuser) {String} opuser
+     *
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/headmaster/test
+     */
+    public function  test(Request $request){
+        $opuser=$request->header("opuser");
+        $aa=Cllass::where("headmaster_id",$opuser)
+        ->leftJoin("patterns","classs.pattern_id","patterns.id")
+            ->select("classs.*","patterns.name")
+        ->first();
+       $first=Carbon::parse($aa->created_at);
+       $second=Carbon::parse($aa->end_at);
+       $r["1"]=$aa->created_at;
+       $r["2"]=$aa->end_at;
+       $r["3"]=$first->diffInMonths($second,false);
+        return $r;
+    }
+
 
 
 }

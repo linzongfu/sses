@@ -29,6 +29,8 @@ Route::group([
     $app->post('/EnTest/show', 'EntestController@show');
     $app->post('/EnTest/Corrected/{Noid}', 'EntestController@Corrected');
 
+    $app->get('/intest/generate', 'IntestController@Generate');
+
 
     $app->get('/teacher/index', 'TeaController@index');
     $app->get('/teacher/showteach', 'TeaController@show');
@@ -60,6 +62,9 @@ Route::group([
     $app->get('/selection/del/{id}','SelectionController@del');
 
 
+    $app->get("/enreport/{Noid}","ReportController@enReport");
+
+
     $app->get('/vote/index','VoteController@index');
     $app->get('/vote/index/{id}','VoteController@show');
     $app->get('/vote/isvote/{id}','VoteController@isvote');
@@ -67,6 +72,7 @@ Route::group([
     $app->get('/vote/list/{id}','VoteController@listing');
 
     $app->get('/headmaster/index','HeadmasterController@index');
+    $app->get('/headmaster/test','HeadmasterController@test');
 
 
     $app->get('/accident/choice','AccidentController@choice');
