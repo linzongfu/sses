@@ -30,6 +30,11 @@ Route::group([
     $app->post('/EnTest/Corrected/{Noid}', 'EntestController@Corrected');
 
     $app->get('/intest/generate', 'IntestController@Generate');
+    $app->get('/intest/index', 'IntestController@index');
+    $app->post('/intest/complete/{stage}', 'IntestController@result_test');
+    $app->post('/intest/edit/{id}', 'IntestController@index');
+
+
 
 
     $app->get('/teacher/index', 'TeaController@index');
@@ -73,6 +78,10 @@ Route::group([
 
     $app->get('/headmaster/index','HeadmasterController@index');
     $app->get('/headmaster/test','HeadmasterController@test');
+
+
+    $app->get('/message/headmaster/get','MessageController@Message_Of_Headmaster');
+    $app->get('/message/student/get','MessageController@Message_Of_Student');
 
 
     $app->get('/accident/choice','AccidentController@choice');
