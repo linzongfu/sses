@@ -30,7 +30,6 @@ class ReportController extends Controller
        $student=User::where("Noid",$Noid)->first();
        if(!$student) return response()->json(["code"=>403,"msg"=>"student Noid is error"]);
        if($Noid!=$opuser){
-
            $class=Cllass::where("headmaster_id",$opuser)->first();
            if(!$class) $class=Cllass::where("assistant_id".$opuser)->first();
            if(!$class) return response()->json(["code"=>403,"msg"=>"forbid access"]);
