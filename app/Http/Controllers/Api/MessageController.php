@@ -41,15 +41,19 @@ class MessageController extends Controller
 
        $create->addMonth($stage*$class->time);
         $time=$create->diffInDays($now,false);
-
-        if ($time<0&&$time>=-10) $intests=Intest::where(["stage_id"=>$stage,"class_id"=>$class->id,"status"=>1])->first();
         $message=null;
-        if(!$intests) {
-             $message[0]["title"]="请布置第".$stage."阶段测试的试题";
-             $message[0]["datetime"]=$now->toDateString();
-             $message[0]["type"]="通知";
+        if ($time<0&&$time>=-10) {
+            $intests=Intest::where(["stage_id"=>$stage,"class_id"=>$class->id,"status"=>1])->first();
+            if(!$intests) {
+                $message[0]["title"]="请布置第".$stage."阶段测试的试题";
+                $message[0]["datetime"]=$now->toDateString();
+                $message[0]["type"]="通知";
+                return response()->json($message);
+            }
         }
         return response()->json($message);
+
+
     }
 
     /**

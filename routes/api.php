@@ -37,6 +37,12 @@ Route::group([
 
 
 
+    $app->get('/intesting/index', 'TestingController@index');
+    $app->get('/intesting/show/{id}', 'TestingController@show');
+
+
+
+
     $app->get('/teacher/index', 'TeaController@index');
     $app->get('/teacher/showteach', 'TeaController@show');
 
