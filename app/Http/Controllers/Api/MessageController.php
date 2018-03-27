@@ -84,6 +84,7 @@ class MessageController extends Controller
             ->get();
 
        $t=0;
+        $message=null;
        if ($intest->count()!=0&&!$intest[0]->choise_reply){
            $message[$t]["title"]="你有待完成的阶段测试";
            $message[$t]["datetime"]=$time->toDateString();
