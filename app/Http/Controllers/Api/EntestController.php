@@ -6,11 +6,13 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Models\Cllass;
 use App\Models\Enmajortest;
 use App\Models\Entesting;
+use App\Models\Intest;
 use App\Models\Label;
 use App\Models\Question;
 use App\Models\Qustype;
 use App\Models\Testrule;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Psy\Test\CodeCleaner\MagicConstantsPassTest;
@@ -36,8 +38,32 @@ class EntestController extends Controller
         if(!in_array(6,getfuncby($opuser)))
             return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
 
-       $questypes=Qustype::select("*")->where(["status"=>0,"pid"=>"0"])->get();
-       return response()->json($questypes);
+        $questype=null;
+         $user=User::where("Noid",$opuser)->first();
+          if(!$user->characterlabel_id||!$user->branchlabel_id||!$user->majorlabel_id){
+              $questype=Qustype::where("pid",0)->get()->toArray();
+
+              if($user->branchlabel_id) array_splice($questype,2,1);
+              if($user->majorlabel_id) array_splice($questype,1,1);
+              if($user->characterlabel_id) array_splice($questype,0,1);
+          }
+         $result=null;
+          if(count($questype)!=0){
+              $result["type"]=1;
+              $result["remark"]="入学";
+              $result["value"]=$questype;
+              return response()->json($result);
+          }
+
+        $time=Carbon::now();
+        $intest=Intest::select('id','stage_id','starttime_at','endtime_at')->where("status",1)->where("class_id",$user->class_id)->where("starttime_at",'<',$time)->where("endtime_at",'>',$time)->get()->toArray();
+        if(count($intest)!=0){
+            $result["type"]=2;
+            $result["remark"]="学中";
+            $result["value"]=$intest;
+            return response()->json($result);
+        }
+        return response()->json($result);
    }
 
     /**

@@ -71,7 +71,7 @@ class TestingController extends Controller
 
         $time=Carbon::now();
         $intest=Intest::find($id);
-
+         if(!$intest) return response()->json(["code"=>403,"msg"=>"intest id error"]);
         if($std->class_id!=$intest->class_id) return response()->json(["code"=>403,"msg"=>"forbid access"]);
         if($time<$intest->starttime_at)return response()->json(["code"=>403,"msg"=>"not open! pleace wait"]);
 
@@ -106,7 +106,7 @@ class TestingController extends Controller
 
 
 
- 
+
     public function submit($id,Request $request){
         $opuser=$request->header("opuser");
         if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
