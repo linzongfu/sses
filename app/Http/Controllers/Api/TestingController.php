@@ -106,20 +106,7 @@ class TestingController extends Controller
 
 
 
-    /**
-     * @api {post} /api/intesting/submit/:id  学生查看阶段测试
-     *
-     * @apiName  Tesing_show
-     * @apiGroup StageTest
-     * @apiVersion 1.0.0
-     * @apiHeader (opuser) {String} opuser
-     *
-     * @apiParam {string}  Cho_Reply 选择题回答
-     * @apiParam {string}  judg_Reply 判断题回答
-     *
-     * @apiSuccess {String} data
-     * @apiSampleRequest /api/intesting/submit/:id
-     */
+ 
     public function submit($id,Request $request){
         $opuser=$request->header("opuser");
         if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);

@@ -37,11 +37,13 @@ class MessageController extends Controller
             ->first();
         if(!$class) return response()->json(["code"=>403,"msg"=>"only open to head master"]);
         $create=Carbon::parse($class->created_at);
+      //  return $class->created_at;
         $stage=floor($now->diffInMonths($create)/$class->time)+1;
 
        $create->addMonth($stage*$class->time);
         $time=$create->diffInDays($now,false);
         $message=null;
+       // return response()->json($time);
         if ($time<0&&$time>=-10) {
             $intests=Intest::where(["stage_id"=>$stage,"class_id"=>$class->id,"status"=>1])->first();
             if(!$intests) {
