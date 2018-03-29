@@ -169,7 +169,7 @@ class IntestController extends Controller
      *
      *
      * @apiSuccess {String} data
-     * @apiSampleRequest /api/intest/complete/:stage
+     * @apiSampleRequest /api/intest/edit/:id
      */
     public  function  edit($id,Request $request){
         $opuser=$request->header("opuser");
