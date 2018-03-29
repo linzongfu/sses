@@ -32,7 +32,7 @@ Route::group([
     $app->get('/intest/generate', 'IntestController@Generate');
     $app->get('/intest/index', 'IntestController@index');
     $app->post('/intest/complete/{stage}', 'IntestController@result_test');
-    $app->post('/intest/edit/{id}', 'IntestController@index');
+    $app->post('/intest/edit/{id}', 'IntestController@edit');
 
 
 

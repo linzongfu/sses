@@ -190,11 +190,12 @@ class IntestController extends Controller
             ->select("classs.*",'patterns.name','patterns.time')
             ->first();
         if(!$class) return response()->json(["code"=>403,"msg"=>"only open to head master"]);
-        $intests=Intest::find($id)->where("status",1);
+        $intests=Intest::where(["status"=>1,"id"=>$id])->first();
 
 
         if(!$intests) return response()->json(["code"=>403,"msg"=>"Information anomaly"]);
-        if($intests->class_id!=$class->id)return response()->json(["code"=>403,"msg"=>"forbid access"]);
+       // return response()->json($intests);
+        if($intests->class_id !=$class->id)return response()->json(["code"=>403,"msg"=>"forbid access"]);
         try{
             $intests->project_name=$name;
             $intests->project_detail=$detail;
