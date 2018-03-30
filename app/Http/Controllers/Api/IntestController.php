@@ -206,4 +206,34 @@ class IntestController extends Controller
             return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
         }
     }
+
+    /**
+     * @api {get} /api/intest/index  阶段测试列表
+     *
+     * @apiName  index
+     * @apiGroup StageTest
+     * @apiVersion 1.0.0
+     * @apiHeader (opuser) {String} opuser
+     *
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/intest/index
+     */
+    public  function  showlist($id,Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+
+        if(!in_array(13,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $now=Carbon::now();
+        $class=Cllass::where("headmaster_id",$opuser)->where("end_at",'>',$now)
+            ->leftJoin('patterns','classs.pattern_id','patterns.id')
+            ->select("classs.*",'patterns.name','patterns.time')
+            ->first();
+        if(!$class) return response()->json(["code"=>403,"msg"=>"only open to head master"]);
+        $intest=Intest::where(["class_id"=>$class->id,"status"=>1])
+            ->get();
+        return response()->json($intest);
+    }
 }

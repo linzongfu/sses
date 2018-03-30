@@ -146,9 +146,13 @@ class SelectionController extends Controller
             return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
 
 
+        $level=2;
         $date=Carbon::now();
         $class=Cllass::where("headmaster_id",$opuser)->where("end_at",">",$date)->first();
-        if(!$class) $class=Cllass::where("assistant_id",$opuser)->where("end_at",">",$date)->first();
+        if(!$class) {
+            $class=Cllass::where("assistant_id",$opuser)->where("end_at",">",$date)->first();
+            $level=1;
+        }
         if(!$class)return response()->json(["code"=>403,'msg'=>"You are not the head teacher can't continue to operate"]);
         $class_id=$class->id;
         $name=$request->get("Name");
@@ -162,6 +166,7 @@ class SelectionController extends Controller
             $selection=new  Selection();
             $selection->class_id=$class_id;
             $selection->publish_id=$opuser;
+            $selection->level=$level;
             $selection->name=$name;
             $selection->maxvote=$maxvote;
             $selection->starttime=$starttime;
