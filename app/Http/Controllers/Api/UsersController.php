@@ -42,6 +42,7 @@ class UsersController extends Controller
         $result["Noid"]=$Noid;
         $result["Name"]=$user->name;
         $result["permits"]=  getArraybystr(Authview::select("permits")->where("role_id",$roleid)->get(),"permits")[0];
+        $result["role"]= getArraybystr(Appoint::where("Noid",$Noid)->get(),"role_id");
         return response()->json(['code'=>200,"data"=>$result]);
     }
 

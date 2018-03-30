@@ -139,8 +139,17 @@ class TestingController extends Controller
         $intest=Intest::find($id);
         if(!$intest)return response()->json(["code"=>400,"msg"=>"intest id not exist"]);
 
-        if($user->class_id!=$intest->class_id)return response()->json(["code"=>403,"msg"=>"this intest is not"])
+        if($user->class_id!=$intest->class_id)return response()->json(["code"=>403,"msg"=>"this intest is not your intest volume"]);
 
+        $intesting=Intesting::where(['user_id'=>$opuser,'intest_id'=>$id])->first();
+        if(!$intesting){
+            $intesting=new Intesting();
+            $intesting->choise_reply=$choice;
+            $intesting->judg_reply=$judgment;
+            $intesting->save();
+            return response()->json(["code"=>200,"msg"=>"submit success"]);
+        }else
+        return response()->json(["code"=>403,"msg"=>"you already submit your answer"]);
         return response()->json($intest);
        // if($user)
 
