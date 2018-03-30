@@ -36,15 +36,15 @@ class SelectionController extends Controller
         $result["Current"]=Selection::whereIn("publish_id",[$class->headmaster_id,$class->assistant_id])->where("starttime",'<',$date)->where('endtime','>',$date)->where("status",1)
             ->leftJoin("users","selections.publish_id",'=','users.Noid')
             ->leftJoin("classs","selections.class_id",'=','classs.id')
-            ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name','selections.starttime','selections.endtime')
+            ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name','users.Noid as user_Noid','selections.starttime','selections.endtime')
             ->get();
         $result["Future"]=Selection::whereIn("publish_id",[$class->headmaster_id,$class->assistant_id])->where('starttime','>',$date)->where("status",1)->leftJoin("users","selections.publish_id",'=','users.Noid')
             ->leftJoin("classs","selections.class_id",'=','classs.id')
-            ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name','selections.starttime','selections.endtime')
+            ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name','users.Noid as user_Noid','selections.starttime','selections.endtime')
             ->get();;
         $result["History"]=Selection::whereIn("publish_id",[$class->headmaster_id,$class->assistant_id])->where('endtime','<',$date)->where("status",1)->leftJoin("users","selections.publish_id",'=','users.Noid')
             ->leftJoin("classs","selections.class_id",'=','classs.id')
-            ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name','selections.starttime','selections.endtime')
+            ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name','users.Noid as user_Noid','selections.starttime','selections.endtime')
             ->get();;
         return response()->json($result);
     }

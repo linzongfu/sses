@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Mockery\Exception;
 
 class TestingController extends Controller
 {
@@ -142,15 +143,23 @@ class TestingController extends Controller
         if($user->class_id!=$intest->class_id)return response()->json(["code"=>403,"msg"=>"this intest is not your intest volume"]);
 
         $intesting=Intesting::where(['user_id'=>$opuser,'intest_id'=>$id])->first();
-        if(!$intesting){
-            $intesting=new Intesting();
-            $intesting->choise_reply=$choice;
-            $intesting->judg_reply=$judgment;
-            $intesting->save();
-            return response()->json(["code"=>200,"msg"=>"submit success"]);
-        }else
-        return response()->json(["code"=>403,"msg"=>"you already submit your answer"]);
-        return response()->json($intest);
+        try{
+            if(!$intesting){
+                $intesting=new Intesting();
+                $intesting->intest_id=$id;
+                $intesting->user_id=$opuser;
+                $intesting->choise_reply=$choice;
+                $intesting->judg_reply=$judgment;
+                $intesting->save();
+                return response()->json(["code"=>200,"msg"=>"submit success"]);
+            }else
+                return response()->json(["code"=>403,"msg"=>"you already submit your answer"]);
+
+        }catch (Exception $e){
+            return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
+        }
+
+       // return response()->json($intest);
        // if($user)
 
 
