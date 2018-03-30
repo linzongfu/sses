@@ -136,10 +136,10 @@ class TestingController extends Controller
         if(!$id||!$choice||!$judgment) return response()->json(["code"=>403,"msg"=>"missing intest_id or choice_reply or judgment_reply"]);
 
 
-        $intest=Intest::find($id)
-            ->leftJoin("intestings","intests.id","intestings.intest_id")
-          //  ->where("user_id",$opuser)
-            ->get();
+        $intest=Intest::find($id);
+        if(!$intest)return response()->json(["code"=>400,"msg"=>"intest id not exist"]);
+
+        if($user->class_id!=$intest->class_id)return response()->json(["code"=>403,"msg"=>"this intest is not"])
 
         return response()->json($intest);
        // if($user)

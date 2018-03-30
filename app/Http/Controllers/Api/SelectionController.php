@@ -29,17 +29,20 @@ class SelectionController extends Controller
 
         if(!in_array(7,getfuncby($opuser)))
             return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $class=Cllass::where("headmaster_id",$opuser)->orWhere("assistant_id",$opuser)->first();
+        if(!$class) return response()->json(["code"=>403,"msg"=>"you are not is headmaster or assistant"]);
         $date=Carbon::now();
-        $result["Current"]=Selection::where("publish_id",$opuser)->where("starttime",'<',$date)->where('endtime','>',$date)->where("status",1)
+        $result["Current"]=Selection::whereIn("publish_id",[$class->headmaster_id,$class->assistant_id])->where("starttime",'<',$date)->where('endtime','>',$date)->where("status",1)
             ->leftJoin("users","selections.publish_id",'=','users.Noid')
             ->leftJoin("classs","selections.class_id",'=','classs.id')
             ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name','selections.starttime','selections.endtime')
             ->get();
-        $result["Future"]=Selection::where("publish_id",$opuser)->where('starttime','>',$date)->where("status",1)->leftJoin("users","selections.publish_id",'=','users.Noid')
+        $result["Future"]=Selection::whereIn("publish_id",[$class->headmaster_id,$class->assistant_id])->where('starttime','>',$date)->where("status",1)->leftJoin("users","selections.publish_id",'=','users.Noid')
             ->leftJoin("classs","selections.class_id",'=','classs.id')
             ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name','selections.starttime','selections.endtime')
             ->get();;
-        $result["History"]=Selection::where("publish_id",$opuser)->where('endtime','<',$date)->where("status",1)->leftJoin("users","selections.publish_id",'=','users.Noid')
+        $result["History"]=Selection::whereIn("publish_id",[$class->headmaster_id,$class->assistant_id])->where('endtime','<',$date)->where("status",1)->leftJoin("users","selections.publish_id",'=','users.Noid')
             ->leftJoin("classs","selections.class_id",'=','classs.id')
             ->select('selections.id','selections.name as sele_name','classs.name as class_name','users.name as user_name','selections.starttime','selections.endtime')
             ->get();;
