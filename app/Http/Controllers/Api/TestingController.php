@@ -138,7 +138,7 @@ class TestingController extends Controller
 
         $intest=Intest::find($id)
             ->leftJoin("intestings","intests.id","intestings.intest_id")
-            ->where("user_id",$opuser)
+          //  ->where("user_id",$opuser)
             ->get();
 
         return response()->json($intest);

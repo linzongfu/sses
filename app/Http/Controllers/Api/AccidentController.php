@@ -49,8 +49,9 @@ class AccidentController extends Controller
         $resutl["User_Name"]=$user->name;
         $resutl["Accidents"]=Accident::where("accidents.student_id",$id)
             ->leftJoin("users","accidents.editor_id","users.Noid")
+            ->leftJoin("accidtypes",'accidents.accidtype_id','accidtypes.id')
             ->where("accidents.status",1)
-            ->select('accidents.id',"accidents.reason",'accidents.score','accidents.created_at','users.name as editor')
+            ->select('accidents.id',"accidents.reason",'accidents.score','accidents.created_at','users.name as editor','accidtypes.name')
             ->skip($start)->take($limit)
             ->orderBy('created_at','desc')
             ->get();
