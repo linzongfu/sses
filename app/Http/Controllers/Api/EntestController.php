@@ -246,7 +246,7 @@ class EntestController extends Controller
             $entest->save();
             if ($entest_pid==1)
                 User::where('Noid',$opuser)->update(["characterlabel_id"=>$result]);
-            else if($entest_pid==2)
+            else if($entest_pid==3)
                 User::where('Noid',$opuser)->update(["branchlabel_id"=>$result]);
             else  return response()->json(['code'=>400,'msg'=>'参数错误']);
 

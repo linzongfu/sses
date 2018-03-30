@@ -39,7 +39,8 @@ Route::group([
 
     $app->get('/intesting/index', 'TestingController@index');
     $app->get('/intesting/show/{id}', 'TestingController@show');
-
+    $app->get('/intesting/show/{id}', 'TestingController@show');
+    $app->post('/intesting/submit', 'TestingController@submit');
 
 
 

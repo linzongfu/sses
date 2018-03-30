@@ -106,51 +106,45 @@ class TestingController extends Controller
 
 
 
-
-    public function submit($id,Request $request){
+    /**
+     * @api {post} /api/intesting/submit  学生提交测试结果
+     *
+     * @apiName submitTest
+     * @apiGroup StageTest
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiParam {string}   intest_id
+     * @apiParam {string}  choice_reply 选择题
+     * @apiParam {string}  judgment_reply 选择题
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/intesting/submit
+     */
+    public function submit(Request $request){
         $opuser=$request->header("opuser");
         if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
 
         if(!in_array(16,getfuncby($opuser)))
             return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+        $user=User::where("Noid",$opuser)->first();
+
+        $id=$request->get("intest_id");
+        $choice=$request->get("choice_reply");
+        $judgment=$request->get("judgment_reply");
+        if(!$id||!$choice||!$judgment) return response()->json(["code"=>403,"msg"=>"missing intest_id or choice_reply or judgment_reply"]);
 
 
-        $std=User::where("Noid",$opuser)->first();
-        if(!$std)return response()->json(["code"=>403,"msg"=>"pleace login again"]);
+        $intest=Intest::find($id)
+            ->leftJoin("intestings","intests.id","intestings.intest_id")
+            ->where("user_id",$opuser)
+            ->get();
 
-        $time=Carbon::now();
-        $intest=Intest::find($id);
+        return response()->json($intest);
+       // if($user)
 
-        if($std->class_id!=$intest->class_id) return response()->json(["code"=>403,"msg"=>"forbid access"]);
-        if($time<$intest->starttime_at)return response()->json(["code"=>403,"msg"=>"not open! pleace wait"]);
 
-        if($time<$intest->endtime_at&&$time>$intest->starttime_at){
-            $result["test"]=$intest;
-            $result["choice"]=Question::select("*")->whereIn("id",explode(",",$intest->choiceid))->get();
-            $result["judgment"]=Question::select("*")->whereIn("id",explode(",",$intest->judgmentid))->get();
-
-            $testing=Intesting::where(["intest_id"=>$intest->id,"user_id"=>$opuser])->get();
-            if($testing->count()==0)$result["is_reply"]=false;
-            else {
-                $result["is_reply"]=true;
-                $result["intesting"]=$testing;
-            }
-            return response()->json($result);
-        }
-        if ($time>$intest->endtime_at){
-            $result["test"]=$intest;
-            $result["choice"]=Question::select("*")->whereIn("id",explode(",",$intest->choiceid))->get();
-            $result["judgment"]=Question::select("*")->whereIn("id",explode(",",$intest->judgmentid))->get();
-
-            $testing=Intesting::where(["intest_id"=>$intest->id,"user_id"=>$opuser])->get();
-            if($testing->count()==0)$result["is_reply"]=false;
-            else {
-                $result["is_reply"]=true;
-                $result["intesting"]=$testing;
-            }
-            return response()->json($result);
-        }
-        return response()->json(["code"=>403,"msg"=>"stage test Id was error"]);
     }
 
 }

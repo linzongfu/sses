@@ -194,7 +194,6 @@ class IntestController extends Controller
 
 
         if(!$intests) return response()->json(["code"=>403,"msg"=>"Information anomaly"]);
-       // return response()->json($intests);
         if($intests->class_id !=$class->id)return response()->json(["code"=>403,"msg"=>"forbid access"]);
         try{
             $intests->project_name=$name;
