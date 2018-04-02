@@ -375,6 +375,7 @@ class EntestController extends Controller
 
 
         $major_test=Enmajortest::where("user_id",$user->Noid)->first();
+        if(!$major_test) return response()->json(["code"=>403,"msg"=>"this student Not to do this test"]);
         $major_test->choreply=json_decode($major_test->choreply,true);
         $major_test->judgreply=json_decode($major_test->judgreply,true);
         $major_test->comrelpy=json_decode($major_test->comrelpy,true);

@@ -45,12 +45,7 @@ class HeadmasterController extends Controller
         $start=$page*$limit;
 
 
-        $user=User::where("users.class_id",$class->id)->where("accidents.status",1)
-           ->leftJoin("accidents","users.Noid","accidents.student_id")
-            ->groupBy("users.Noid",'users.name')
-            ->select('users.Noid','users.name',\DB::raw('SUM(accidents.score) as score'))
-            ->take($start)->limit($limit)
-            ->get();
+
         $user=User::where("class_id",$class->id)
            // ->select("Noid",'name')
             ->take($start)->limit($limit)

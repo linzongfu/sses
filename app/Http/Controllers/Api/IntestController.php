@@ -208,6 +208,7 @@ class IntestController extends Controller
         }
     }
 
+
     /**
      * @api {get} /api/intest/index/:id  某次测试的详情
      *
@@ -215,7 +216,6 @@ class IntestController extends Controller
      * @apiGroup StageTest
      * @apiVersion 1.0.0
      * @apiHeader (opuser) {String} opuser
-     *
      *
      * @apiSuccess {String} data
      * @apiSampleRequest /api/intest/index/:id
@@ -238,4 +238,7 @@ class IntestController extends Controller
 
         return response()->json($intest);
     }
+
+
+
 }

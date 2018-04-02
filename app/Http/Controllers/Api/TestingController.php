@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Debate;
 use App\Models\Intest;
 use App\Models\Intesting;
 use App\Models\Question;
@@ -165,4 +166,49 @@ class TestingController extends Controller
 
     }
 
+
+    /**
+     * @api {post} /api/intesting/debate  学生提交测试结果
+     *
+     * @apiName submitTest
+     * @apiGroup StageTest
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiParam {string}  project 项目
+     * @apiParam {string}  file 选择题
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/intesting/submit
+     */
+    public function debate(Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+
+        if(!in_array(16,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+        $user=User::where("Noid",$opuser)->first();
+
+
+        $id=$request->get("intest_id");
+        $choice=$request->get("choice_reply");
+        $judgment=$request->get("judgment_reply");
+        if(!$id||!$choice||!$judgment) return response()->json(["code"=>403,"msg"=>"missing intest_id or choice_reply or judgment_reply"]);
+
+
+        $intest=Intest::find($id);
+        if(!$intest)return response()->json(["code"=>400,"msg"=>"intest id not exist"]);
+
+        if($user->class_id!=$intest->class_id)return response()->json(["code"=>403,"msg"=>"this intest is not your intest volume"]);
+
+        $debate=Debate::where(['user_id'=>$opuser,'intest_id'=>$id])->first();
+
+       try{
+           if(!$debate){
+
+           }
+       }catch (){}
+
+    }
 }
