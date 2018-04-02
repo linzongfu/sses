@@ -22,6 +22,8 @@ Route::group([
     $app->post('/login', 'UsersController@login');
     $app->post('/users/add', 'UsersController@add');
 
+
+    $app->get('/EnTest/index_tea','EntestController@index_tea');
     $app->get('/ChoiceTest', 'EntestController@index');
     $app->get('/EnTest/{id}', 'EntestController@Entest');
     $app->get('/EnTest/Correct/{Noid}', 'EntestController@Correct');

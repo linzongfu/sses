@@ -204,11 +204,7 @@ class TestingController extends Controller
 
         $debate=Debate::where(['user_id'=>$opuser,'intest_id'=>$id])->first();
 
-       try{
-           if(!$debate){
 
-           }
-       }catch (){}
 
     }
 }

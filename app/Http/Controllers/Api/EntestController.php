@@ -386,6 +386,40 @@ class EntestController extends Controller
 
 
     /**
+     * @api {get} /api/EnTest/index_tea 查看学生测试列表
+     *
+     * @apiName show_te
+     * @apiGroup EntrTest
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/EnTest/index_tea
+     */
+    public function index_tea(Request $request)
+    {
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+
+        if(!in_array(11,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+
+        $class=Cllass::where("headmaster_id",$opuser)->first();
+
+        $result["wei"]=Enmajortest::where("users.class_id",$class->id)->whereNull("sumscore")
+            ->leftJoin("users","enmajortests.user_id","users.Noid")
+            ->select('users.name','users.Noid','enmajortests.id as test_id')
+             ->get();
+        $result["gai"]=Enmajortest::where("users.class_id",$class->id)->whereNotNull("sumscore")
+            ->leftJoin("users","enmajortests.user_id","users.Noid")
+            ->select('users.name','users.Noid','enmajortests.id as test_id')
+            ->get();
+        return response()->json($result);
+    }
+
+    /**
      * @api {post} /api/EnTest/Corrected/:Noid  批改好作业提交
      *
      * @apiName Corrected
@@ -458,6 +492,7 @@ class EntestController extends Controller
         }
 
     }
+
 
 
     /**
