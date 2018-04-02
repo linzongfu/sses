@@ -51,6 +51,10 @@ class HeadmasterController extends Controller
             ->select('users.Noid','users.name',\DB::raw('SUM(accidents.score) as score'))
             ->take($start)->limit($limit)
             ->get();
+        $user=User::where("class_id",$class->id)
+           // ->select("Noid",'name')
+            ->take($start)->limit($limit)
+            ->get();
         return $user;
     }
 

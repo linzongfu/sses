@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Cllass;
 use App\Models\Intest;
+use App\Models\Intesting;
 use App\Models\Question;
 use App\Models\Qustype;
 use App\Models\Testrule;
@@ -208,7 +209,7 @@ class IntestController extends Controller
     }
 
     /**
-     * @api {get} /api/intest/index  阶段测试列表
+     * @api {get} /api/intest/index/:id  某次测试的详情
      *
      * @apiName  index
      * @apiGroup StageTest
@@ -217,7 +218,7 @@ class IntestController extends Controller
      *
      *
      * @apiSuccess {String} data
-     * @apiSampleRequest /api/intest/index
+     * @apiSampleRequest /api/intest/index/:id
      */
     public  function  showlist($id,Request $request){
         $opuser=$request->header("opuser");
@@ -226,14 +227,15 @@ class IntestController extends Controller
         if(!in_array(13,getfuncby($opuser)))
             return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
 
-        $now=Carbon::now();
-        $class=Cllass::where("headmaster_id",$opuser)->where("end_at",'>',$now)
-            ->leftJoin('patterns','classs.pattern_id','patterns.id')
-            ->select("classs.*",'patterns.name','patterns.time')
-            ->first();
-        if(!$class) return response()->json(["code"=>403,"msg"=>"only open to head master"]);
-        $intest=Intest::where(["class_id"=>$class->id,"status"=>1])
-            ->get();
+        $class=Cllass::where("headmaster_id",$opuser)->where("end_at",'>',Carbon::now())->first();
+        $intest=Intest::find($id);
+        if(!$intest)return response()->json(["code"=>400,"msg"=>"intest id not exist"]);
+
+        if($class->id!=$intest->class_id)return response()->json(["code"=>403,"msg"=>"this intest is not your class intest"]);
+
+        $result["Not_Correct"]= $intestings=Intesting::where("intest_id",$id)->where("status",0)->get();
+        $result["Corrected"]= $intestings=Intesting::where("intest_id",$id)->where("status",1)->get();
+
         return response()->json($intest);
     }
 }
