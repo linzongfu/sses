@@ -92,8 +92,11 @@ Route::group([
 
 
     $app->get('/message/headmaster/get','MessageController@Message_Of_Headmaster');
+    $app->get('/message/show/{id}','MessageController@show');
     $app->get('/message/student/get','MessageController@Message_Of_Student');
     $app->post('/add_message','MessageController@Add_message');
+    $app->get('/message/recall/{id} ','MessageController@Recall_message');
+    $app->get('/message/index','MessageController@index');
 
 
     $app->get('/accident/choice','AccidentController@choice');
