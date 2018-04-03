@@ -35,6 +35,7 @@ Route::group([
     $app->get('/intest/index', 'IntestController@index');
     $app->post('/intest/complete/{stage}', 'IntestController@result_test');
     $app->post('/intest/edit/{id}', 'IntestController@edit');
+    $app->post('/intest/defense/{intest_id}', 'IntestController@defense');
 
 
 
@@ -43,6 +44,7 @@ Route::group([
     $app->get('/intesting/show/{id}', 'TestingController@show');
     $app->get('/intesting/show/{id}', 'TestingController@show');
     $app->post('/intesting/submit', 'TestingController@submit');
+    $app->post('/intesting/debate', 'TestingController@debate');
 
 
 
@@ -91,6 +93,7 @@ Route::group([
 
     $app->get('/message/headmaster/get','MessageController@Message_Of_Headmaster');
     $app->get('/message/student/get','MessageController@Message_Of_Student');
+    $app->post('/add_message','MessageController@Add_message');
 
 
     $app->get('/accident/choice','AccidentController@choice');

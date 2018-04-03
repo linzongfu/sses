@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Appoint;
 use App\Models\Cllass;
+use App\Models\Debate;
+use App\Models\Defense;
 use App\Models\Intest;
 use App\Models\Intesting;
 use App\Models\Question;
@@ -239,6 +242,65 @@ class IntestController extends Controller
         return response()->json($intest);
     }
 
+
+    /**
+     * @api {post} /api/intest/defense/:intest_id  项目答辩打分
+     *
+     * @apiName  defense
+     * @apiGroup StageTest
+     * @apiVersion 1.0.0
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiParam {string}  Noid  学生学号
+     * @apiParam {string}  role_id  角色_id
+     * @apiParam {float}  projectscore 项目分
+     * @apiParam {float}  debatescore 答辩分
+     * @apiParam {float}  filescore 文档分
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/intest/defense/:intest_id
+     */
+    public  function  defense($id,Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+
+        $time=Carbon::now();
+        $studNoid=$request->get("Noid");
+        $role_id=$request->get("role_id");
+        $projectscore=$request->get("projectscore");
+        $debatescore=$request->get("debatescore");
+        $filescore=$request->get("filescore");
+        if (!$studNoid||!$role_id||!$projectscore||!$debatescore||!$filescore)return response()->json(["code"=>403,"msg"=>"parameter missing"]);
+
+        $intest=Intest::where("id",$id)->where("starttime_at","<",$time)->where("endtime_at",">",$time)->first();
+        if(!$intest) return response()->json(["code"=>403,"not opening id was ".$id." test"]);
+
+        $appoint=Appoint::where(["Noid"=>$opuser,"role_id"=>$role_id])->first();
+        if(!$appoint)return response()->json(["code"=>403,"msg"=>"role error"]);
+
+        $debate=Debate::where(["user_id"=>$studNoid,"intest_id"=>$id])->first();
+       if(!$debate)return response()->json(["code"=>403,"msg"=>"intest_id or stud_id error"]);
+
+        $defense=Defense::where(["role_id"=>$role_id,"debate_id"=>$debate->id,"user_id"=>$opuser])->first();
+         try{
+             if (!$defense) {
+                 $defense=new  Defense();
+                 $defense->role_id=$role_id;
+                 $defense->debate_id=$debate->id;
+                 $defense->user_id=$opuser;
+             }
+             $defense->projectscore=$projectscore;
+             $defense->debatescore=$debatescore;
+             $defense->filescore=$filescore;
+             $defense->save();
+             return response()->json(["code"=>200,"msg"=>"success"]);
+
+         }catch (\Exception $e){
+             return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
+         }
+
+        return response()->json($appoint);
+    }
 
 
 }

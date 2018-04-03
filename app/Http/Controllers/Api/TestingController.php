@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Debate;
+use App\Models\Defense;
 use App\Models\Intest;
 use App\Models\Intesting;
 use App\Models\Question;
@@ -168,19 +169,20 @@ class TestingController extends Controller
 
 
     /**
-     * @api {post} /api/intesting/debate  学生提交测试结果
+     * @api {post} /api/intesting/debate  学生提交项目结果
      *
-     * @apiName submitTest
+     * @apiName debateTest
      * @apiGroup StageTest
      * @apiVersion 1.0.0
      *
      * @apiHeader (opuser) {String} opuser
      *
-     * @apiParam {string}  project 项目
-     * @apiParam {string}  file 选择题
+     * @apiParam {int}  id  阶段测试id
+     * @apiParam {string}  project 项目路径
+     * @apiParam {string}  file 文档路径
      *
      * @apiSuccess {String} data
-     * @apiSampleRequest /api/intesting/submit
+     * @apiSampleRequest /api/intesting/debate
      */
     public function debate(Request $request){
         $opuser=$request->header("opuser");
@@ -191,10 +193,10 @@ class TestingController extends Controller
         $user=User::where("Noid",$opuser)->first();
 
 
-        $id=$request->get("intest_id");
-        $choice=$request->get("choice_reply");
-        $judgment=$request->get("judgment_reply");
-        if(!$id||!$choice||!$judgment) return response()->json(["code"=>403,"msg"=>"missing intest_id or choice_reply or judgment_reply"]);
+        $id=$request->get("id");
+        $project=$request->get("project");
+        $file=$request->get("file");
+        if(!$id||!$project||!$file) return response()->json(["code"=>403,"msg"=>"missing intest_id or choice_reply or judgment_reply"]);
 
 
         $intest=Intest::find($id);
@@ -205,6 +207,32 @@ class TestingController extends Controller
         $debate=Debate::where(['user_id'=>$opuser,'intest_id'=>$id])->first();
 
 
+        try{
+           if(!$debate){
+                 $debate=new  Debate();
+                 $debate->intest_id=$id;
+                 $debate->project=$project;
+                 $debate->file=$file;
+                 $debate->user_id=$opuser;
+                 $debate->save();
+                 return response()->json(["code"=>200,"msg"=>"sucess"]);
+           }
+           else{
+               $cou=Defense::where("debate_id",$debate->id)->get()->count();
+               if ($cou==0){
+                   $debate->intest_id=$id;
+                   $debate->project=$project;
+                   $debate->file=$file;
+                   $debate->save();
+                   return response()->json(["code"=>200,"msg"=>"sucess"]);
+               }else{
+                   return response()->json(["code"=>403,"msg"=>"not modify"]);
+               }
+           }
+        }
+        catch (\Exception $e){
+            return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
+        }
 
     }
 }

@@ -90,16 +90,33 @@ class MessageController extends Controller
        if ($intest->count()!=0&&!$intest[0]->choise_reply){
            $message[$t]["title"]="你有待完成的阶段测试";
            $message[$t]["datetime"]=$time->toDateString();
-           $message[$t]["type"]="通知";
+           $message[$t]["type"]="待办";
            $t++;
        }
 
        if(!$stud->characterlabel_id||!$stud->branchlabel_id||!$stud->majorlabel_id){
            $message[$t]["title"]="请进行入学测试";
            $message[$t]["datetime"]=$time->toDateString();
-           $message[$t]["type"]="通知";
+           $message[$t]["type"]="待办";
            $t++;
        }
         return response()->json($message);
+    }
+
+    /**
+     * @api {post} /api/add_message  班主任发布消息
+     *
+     * @apiName  Add_Msssage
+     * @apiGroup Message
+     * @apiVersion 1.0.0
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiParam {array}  Noids 学号
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/add_message
+     */
+    public function  Add_message(Request $request){
+        printf($request->get("Noids"));
     }
 }
