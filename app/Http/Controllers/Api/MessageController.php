@@ -140,9 +140,6 @@ class MessageController extends Controller
         if($mge->class_id!=$stu->class_id) return response()->json(["code"=>403,"msg"=>"you not look this message"]);
 
 
-
-
-       if($mge->sponsor_id)$mge["sponsor"]=getArraybystr(User::where("Noid",$mge->sponsor_id)->get(),'name');
         $redmsg=Readmge::where("message_id",$id)->where("stu_id",$opuser)->first();
         if (!$redmsg){
             $redmsg=new  Readmge();
@@ -176,7 +173,9 @@ class MessageController extends Controller
         if(!in_array(14,getfuncby($opuser)))
             return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
         $input=$request->only(['sponsor_id','title','description']);
-        if(!$input['sponsor_id']) $input['sponsor_id']=$opuser;;
+        if(!$input['sponsor_id']) {
+            $input['sponsor_id']=User::where("Noid",$opuser)->first()->name;
+        };
         $validator =\Validator::make($input,['sponsor_id'=>'required|alpha_num|string', 'title'=>'required|string', 'description'=>'required|string',]);
         if ($validator->fails()) return response()->json(['code'=>400,'msg'=>$validator->errors()]);
         $class=Cllass::where("headmaster_id",$opuser)->where("end_at",">",Carbon::now())->first();
@@ -243,14 +242,18 @@ class MessageController extends Controller
         $opuser=$request->header("opuser");
         if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
         if(!in_array(14,getfuncby($opuser)))
+        if(!in_array(15,getfuncby($opuser)))
             return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
 
-        $class_id=Cllass::where("headmaster_id",$opuser)->where("end_at",">",Carbon::now())->first()->id;
-        if(!$class_id) $class_id=User::where("Noid",$opuser)->first()->class_id;
-        if (!$class_id) return response()->json(["code"=>403,"msg"=>"not found"]);
+        $id=null;
+        $class=Cllass::where("headmaster_id",$opuser)->where("end_at",">",Carbon::now())->first();
+        if($class) $id=$class->id;
+        if(!$class) $class=User::where("Noid",$opuser)->first();
+        if($class) $id=$class->class_id;
+        if (!$class) return response()->json(["code"=>403,"msg"=>"not found"]);
 
 
-         $me=Message::where("class_id",$class_id)->get();
+         $me=Message::where("class_id",$id)->get();
          return response()->json($me);
     }
 

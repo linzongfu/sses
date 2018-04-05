@@ -211,8 +211,8 @@ class TestingController extends Controller
            if(!$debate){
                  $debate=new  Debate();
                  $debate->intest_id=$id;
-                 $debate->project=$project;
-                 $debate->file=$file;
+                 $debate->project="http://120.78.212.113:81/"."project/".$id."/".$opuser."/".$project;
+                 $debate->file="http://120.78.212.113:81/"."file/".$id."/".$opuser."/".$file;
                  $debate->user_id=$opuser;
                  $debate->save();
                  return response()->json(["code"=>200,"msg"=>"sucess"]);
