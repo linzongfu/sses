@@ -107,6 +107,9 @@ Route::group([
 
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');
+
+
+    Route::post('/upload','FileController@upload');
     $app->middleware('auth:api')->get('/user', function (Request $request) {
         return $request->user();
     });

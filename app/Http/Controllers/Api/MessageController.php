@@ -248,10 +248,12 @@ class MessageController extends Controller
         $id=null;
         $class=Cllass::where("headmaster_id",$opuser)->where("end_at",">",Carbon::now())->first();
         if($class) $id=$class->id;
-        if(!$class) $class=User::where("Noid",$opuser)->first();
-        if($class) $id=$class->class_id;
-        if (!$class) return response()->json(["code"=>403,"msg"=>"not found"]);
-
+        else {
+            $class=User::where("Noid",$opuser)->first();
+            if($class) $id=$class->class_id;
+            else return response()->json(["code"=>403,"msg"=>"not found"]);
+        }
+        
 
          $me=Message::where("class_id",$id)->get();
          return response()->json($me);
