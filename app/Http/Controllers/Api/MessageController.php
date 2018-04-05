@@ -90,8 +90,7 @@ class MessageController extends Controller
             ->leftJoin("intestings",'intests.id',"intestings.intest_id")
             ->get();
 
-       $megids=getArraybystr(Message::where("class_id",$stud->class_id)->leftJoin('readmges',"messages.id","readmges.message_id")->where("stu_id",$opuser)->get(),'id');
-        //return $megids;
+       $megids=getArraybystr(Message::where("class_id",$stud->class_id)->leftJoin('readmges',"messages.id","readmges.message_id")->where("stu_id",$opuser)->get(),'message_id');
         $message=Message::select('messages.id','messages.title','messages.description','messages.type','users.name')
             ->where("messages.class_id",$stud->class_id)->whereNotIn("messages.id",$megids)
             ->leftJoin("users","messages.sponsor_id","users.Noid")
@@ -253,7 +252,7 @@ class MessageController extends Controller
             if($class) $id=$class->class_id;
             else return response()->json(["code"=>403,"msg"=>"not found"]);
         }
-        
+
 
          $me=Message::where("class_id",$id)->get();
          return response()->json($me);
