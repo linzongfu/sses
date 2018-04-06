@@ -47,13 +47,19 @@ return [
             'driver' => 'local',
             'root' => storage_path('app'),
         ],
+        // 本地端的public空间
+        // 新建一个本地端uploads空间（目录） 用于存储上传的文件
+        'uploads' => [
 
-        'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
-            'visibility' => 'public',
+
+            // 文件将上传到storage/app/uploads目录
+            'root' => storage_path('app/uploads'),
+
+            // 文件将上传到public/uploads目录 如果需要浏览器直接访问 请设置成这个
+            //‘root‘ => public_path(‘uploads‘),
         ],
+
 
         's3' => [
             'driver' => 's3',

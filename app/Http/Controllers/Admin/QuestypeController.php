@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Input;
 class QuestypeController extends Controller
 {
     /**
-     * @api {get} /admin/questype 所有入学测试类型
+     * @api {get} /admin/questype
      *
      * @apiName questype
      * @apiGroup EntrTest
@@ -54,7 +54,7 @@ class QuestypeController extends Controller
     }
 
     /**
-     * @api {get} /admin/questype/addquestype 添加测试类型
+     * @api {get} /admin/questype/addquestype
      *
      * @apiName questype
      * @apiGroup EntrTest
@@ -121,7 +121,7 @@ class QuestypeController extends Controller
 
     }
     /**
-     * @api {get} /admin/questype/:id  指定类型的题
+     * @api {get} /admin/questype/:id
      *
      * @apiName question
      * @apiGroup EntrTest

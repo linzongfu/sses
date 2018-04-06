@@ -15,6 +15,12 @@ Route::group(['namespace'=>'Admin',
     'prefix'=>'admin',
     'middleware'=>'cors'
     ],function ($app){
+    $app->get('/index', 'ManageController@index');
+
+    $app->get('/userlist', 'UserController@user_list');
+
+
+
    $app->get('/questype', 'QuestypeController@index');
    $app->get('/test', 'QuestypeController@test');
    $app->post('/questype/create', 'QuestypeController@addquestype');
