@@ -32,6 +32,7 @@ Route::group([
     $app->post('/EnTest/Corrected/{Noid}', 'EntestController@Corrected');
 
     $app->get('/intest/generate', 'IntestController@Generate');
+    $app->get('/intest/choice', 'IntestController@choice_index');
     $app->get('/intest/index', 'IntestController@index');
     $app->post('/intest/complete/{stage}', 'IntestController@result_test');
     $app->post('/intest/edit/{id}', 'IntestController@edit');

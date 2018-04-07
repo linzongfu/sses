@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Appoint;
+use App\Models\Log;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -55,4 +56,32 @@ class UserController extends Controller
 
     }
 
+    /**
+     * @api {delete} /admin/userlist/delete/:Noid 删除用户
+     *
+     * @apiName user_delete
+     * @apiGroup UserManage
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/userlist/delete/:Noid
+     */
+    public function user_delete($Noid,Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(17,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $user=User::where("Noid",$Noid)->first();
+        if(!$user) return  response()->json(["code"=>403,"msg"=>"无此用户"]);
+//        try{
+//            $user->delete();
+//            $log=new Log();
+//            $log->Noid=$opuser;
+//         //   $url
+//        }catch (){}
+
+    }
 }

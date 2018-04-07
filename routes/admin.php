@@ -18,6 +18,8 @@ Route::group(['namespace'=>'Admin',
     $app->get('/index', 'ManageController@index');
 
     $app->get('/userlist', 'UserController@user_list');
+    $app->delete('/userlist/delete/{Noid}', 'UserController@user_delete');
+
 
 
 

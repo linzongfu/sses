@@ -103,6 +103,34 @@ class IntestController extends Controller
       }
       return  response()->json($result);
   }
+
+
+    /**
+     * @api {get} /api/intest/choice  哪次测评选择
+     *
+     * @apiName  intest_choice
+     * @apiGroup StageTest
+     * @apiVersion 1.0.0
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiParam {string}   class_id 班级id  可选
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/intest/choice
+     */
+    public  function  choice_index(Request $request){
+
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+
+
+        $class_id=$request->get("class_id");
+        $result["class"]=Cllass::all();
+        if($class_id)$result["intest"]=Intest::where("class_id",$class_id)->get();
+        return  response()->json($result);
+    }
+
+
     /**
      * @api {post} /api/intest/complete/:stage  最终阶段测试稿
      *
