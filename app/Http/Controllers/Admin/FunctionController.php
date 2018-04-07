@@ -37,8 +37,9 @@ class FunctionController extends Controller
         if(!$limit) $limit=10;
         $page=$page?$page-1:0;
         $start=$page*$limit;
-        $fun=FFunction::where("status",1)->skip($start)->take($limit)->orderBy("created_at",$sort)->get();
-        $result=$fun;
+        $fun=FFunction::where("status",1);
+        $result["count"]=$fun->count();
+        $result['fun']=$fun->skip($start)->take($limit)->orderBy("created_at",$sort)->get();
         return response()->json($result);
     }
 

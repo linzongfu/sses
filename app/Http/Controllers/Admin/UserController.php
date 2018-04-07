@@ -61,6 +61,7 @@ class UserController extends Controller
            $userids=getArraybystr(Appoint::where("role_id",$role_id)->get(),"Noid");
            $user=$user->whereIn("Noid",$userids);
        }
+        $result["count"]=$user->count();
        if(!$sort) $sort='desc';
         $user=$user->skip($start)->take($limit)->orderBy("created_at",$sort)->get();
         $result["user"]=$user;

@@ -37,8 +37,10 @@ class PermitController extends Controller
         if(!$limit) $limit=10;
         $page=$page?$page-1:0;
         $start=$page*$limit;
-        $fun=Permit::where("status",1)->skip($start)->take($limit)->orderBy("id",$sort)->get();
-        $result=$fun;
+        $fun=Permit::where("status",1);
+        $result["count"]=$fun->count();
+
+        $result["per"]=$fun->skip($start)->take($limit)->orderBy("id",$sort)->get();
         return response()->json($result);
     }
 
