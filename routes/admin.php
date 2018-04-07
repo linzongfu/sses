@@ -20,6 +20,7 @@ Route::group(['namespace'=>'Admin',
     $app->get('/userlist', 'UserController@user_list');
     $app->delete('/userlist/delete/{Noid}', 'UserController@user_delete');
     $app->post('/userlist/create', 'UserController@user_create');
+    $app->get('/userlist/create', 'UserController@add');
 
 
 

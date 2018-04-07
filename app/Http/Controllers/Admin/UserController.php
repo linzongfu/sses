@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Appoint;
+use App\Models\Cllass;
 use App\Models\Log;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Psy\Test\Exception\RuntimeExceptionTest;
+use Tymon\JWTAuth\Claims\Claim;
 
 class UserController extends Controller
 {
@@ -119,7 +121,6 @@ class UserController extends Controller
      * @apiParam{string} password 密码
      * @apiParam{string} branch 1文2理 可选
      * @apiParam{string} class_id 班级 可选
-     * @apiParam{string} major_id 专业 可选
      *
      * @apiSuccess {array} data
      * @apiSampleRequest /admin/userlist/create
@@ -146,8 +147,13 @@ class UserController extends Controller
                 $user->Noid=$input['noid'];
                 $user->name=$input['name'];
                 $user->password=md5(md5($input['password']).$input['password']);
-                $user->class_id=$input['class_id'];
-                $user->major_id=$input['major_id'];
+                if($input['class_id']){
+                    $class=Cllass::where("id",$input['class_id'])->first();
+                    if(!$class) return response()->json(["code"=>403,"msg"=>"class not found"]);
+                    $user->class_id=$class->id;
+                    $user->major_id=$class->major_id;
+                }
+
                 $user->branch=$input['branch'];
                 $user->save();
                 return response()->json(['code'=>200,'msg'=>'添加成功']);
@@ -156,4 +162,28 @@ class UserController extends Controller
             }
 
         }
+
+
+    /**
+     * @api {get} /admin/userlist/create 添加用户前置
+     *
+     * @apiName user_add
+     * @apiGroup UserManage
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/userlist/create
+     */
+    public function add(Request $request){
+        $opuser= $request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"未登录"]);
+        if(!in_array(17,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"禁止访问"]);
+
+        $result=Cllass::all();
+      return response()->json($result);
+    }
 }
