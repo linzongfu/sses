@@ -61,7 +61,8 @@ class UserController extends Controller
        }
        if(!$sort) $sort='desc';
         $user=$user->skip($start)->take($limit)->orderBy("created_at",$sort)->get();
-        return response()->json($user);
+        $result["user"]=$user;
+        return response()->json($result);
 
 
     }
