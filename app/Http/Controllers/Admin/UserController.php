@@ -24,6 +24,8 @@ class UserController extends Controller
      * @apiParam {int}   role_id  角色 检索可选
      * @apiParam {string}   Noid  编号 检索可选
      * @apiParam {string}   sort   时间排序 可选 asc|desc
+     * @apiParam {string}  page 页码 默认第一页
+     * @apiParam {string}  limit 显示条数 默认10
      *
      *
      * @apiSuccess {array} data
@@ -39,6 +41,13 @@ class UserController extends Controller
         $role_id=$request->get("role_id");
         $Noid=$request->get("Noid");
         $sort=$request->get("sort");
+        $page=$request->get('page');
+        $limit=$request->get('limit');
+        if(!$limit) $limit=10;
+        $page=$page?$page-1:0;
+
+        $start=$page*$limit;
+        $result["role"]=Role::all();
         if($Noid){
             $user=$user->where("Noid",$Noid)->get();
             if(count($user)==0)return response()->json(["code"=>403,"msg"=>"无此用户"]);
@@ -51,7 +60,7 @@ class UserController extends Controller
            $user=$user->whereIn("Noid",$userids);
        }
        if(!$sort) $sort='desc';
-        $user=$user->orderBy("created_at",$sort)->get();
+        $user=$user->skip($start)->take($limit)->orderBy("created_at",$sort)->get();
         return response()->json($user);
 
 
@@ -96,7 +105,7 @@ class UserController extends Controller
 
 
     /**
-     * @api {put} /admin/userlist/create 添加用户
+     * @api {post} /admin/userlist/create 添加用户
      *
      * @apiName user_create
      * @apiGroup UserManage
@@ -104,17 +113,46 @@ class UserController extends Controller
      *
      * @apiHeader (opuser) {String} opuser
      *
+     * @apiParam{string} noid 编号
+     * @apiParam{string} name 姓名
+     * @apiParam{string} password 密码
+     * @apiParam{string} branch 1文2理 可选
+     * @apiParam{string} class_id 班级 可选
+     * @apiParam{string} major_id 专业 可选
      *
      * @apiSuccess {array} data
      * @apiSampleRequest /admin/userlist/create
      */
     public function user_create(Request $request){
-        $opuser=$request->header("opuser");
-        return $opuser;
-        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
-        if(!in_array(17,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+            $opuser= $request->header("opuser");
+            if(!$opuser) return response()->json(["code"=>401,"msg"=>"未登录"]);
+            if(!in_array(17,getfuncby($opuser)))
+                return   response()->json(["code"=>403,"msg"=>"禁止访问"]);
 
+            try{
+                $input=$request->only(['noid','name','password','branch','class_id','major_id']);
+                $validator = \Validator::make($input,[
+                    'noid'=>'required|unique:users',
+                    'password'=>'required|max:16|min:6',
+                    'name'=>'required',
+                    'branch'=>'nullable|alpha_num',
+                    'class_id'=>'nullable|alpha_num|max:10|min:1',
+                    'major_id'=>'nullable|alpha_num|max:10|min:1',
+                ]);
+                if ($validator->fails()) return response()->json(['code'=>400,'msg'=>'参数错误']);
 
+                $user =new User();
+                $user->Noid=$input['noid'];
+                $user->name=$input['name'];
+                $user->password=md5(md5($input['password']).$input['password']);
+                $user->class_id=$input['class_id'];
+                $user->major_id=$input['major_id'];
+                $user->branch=$input['branch'];
+                $user->save();
+                return response()->json(['code'=>200,'msg'=>'添加成功']);
+            }catch(\Exception $e){
+                return response()->json(['code'=>400,"msg"=>$e->getMessage()]);
+            }
 
-    }
+        }
 }
