@@ -18,9 +18,23 @@ Route::group(['namespace'=>'Admin',
     $app->get('/index', 'ManageController@index');
 
     $app->get('/userlist', 'UserController@user_list');
-    $app->delete('/userlist/delete/{Noid}', 'UserController@user_delete');
-    $app->post('/userlist/create', 'UserController@user_create');
     $app->get('/userlist/create', 'UserController@add');
+    $app->post('/userlist/create', 'UserController@user_create');
+    $app->put('/userlist/edit/{Noid}', 'UserController@user_edit');
+    $app->delete('/userlist/delete/{Noid}', 'UserController@user_delete');
+
+    $app->get('/functionlist', 'FunctionController@function_list');
+    $app->get('/functionlist/create', 'FunctionController@add');
+    $app->post('/functionlist/create', 'FunctionController@function_create');
+    $app->put('/functionlist/edit/{id}', 'FunctionController@function_edit');
+    $app->delete('/functionlist/delete/{id}', 'FunctionController@function_delete');
+
+    $app->get('/permitlist', 'PermitController@permit_list');
+    $app->get('/permitlist/create', 'PermitController@add');
+    $app->post('/permitlist/create', 'PermitController@permit_create');
+    $app->put('/permitlist/edit/{id}', 'PermitController@permit_edit');
+    $app->delete('/permitlist/delete/{id}', 'PermitController@permit_delete');
+
 
 
 

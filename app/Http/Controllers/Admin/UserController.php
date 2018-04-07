@@ -52,7 +52,7 @@ class UserController extends Controller
         $result["role"]=Role::all();
         if($Noid){
             $user=$user->where("Noid",$Noid)->get();
-            if(count($user)==0)return response()->json(["code"=>403,"msg"=>"无此用户"]);
+           // if(count($user)==0)return response()->json(["code"=>403,"msg"=>"无此用户"]);
             $result["user"]=$user;
             return  response()->json($result);
         }
@@ -91,14 +91,7 @@ class UserController extends Controller
         if(!$user) return  response()->json(["code"=>403,"msg"=>"无此用户"]);
         try{
             $user->delete();
-            $log=new Log();
-            $log->Noid=$opuser;
-            $log->url=$request->getRequestUri();
-            $log->ip=$request->getClientIp();
-            $log->catalog="delete";
-            $log->info="删除用户".$Noid;
-            $log->type=1;
-            $log->save();
+            log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"delete","删除用户".$Noid,1);
             return response()->json(["code"=>200,"msg"=>"删除成功"]);
         }catch (\Exception $e){
             return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
@@ -153,9 +146,9 @@ class UserController extends Controller
                     $user->class_id=$class->id;
                     $user->major_id=$class->major_id;
                 }
-
                 $user->branch=$input['branch'];
                 $user->save();
+                log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"create","添加用户".$input['noid'],1);
                 return response()->json(['code'=>200,'msg'=>'添加成功']);
             }catch(\Exception $e){
                 return response()->json(['code'=>400,"msg"=>$e->getMessage()]);
@@ -165,7 +158,7 @@ class UserController extends Controller
 
 
     /**
-     * @api {get} /admin/userlist/create 添加用户前置
+     * @api {get} /admin/userlist/create 添加或修改用户前置
      *
      * @apiName user_add
      * @apiGroup UserManage
@@ -186,4 +179,60 @@ class UserController extends Controller
         $result=Cllass::all();
       return response()->json($result);
     }
+
+    /**
+     * @api {put} /admin/userlist/edit/:Noid 修改用户
+     *
+     * @apiName user_update
+     * @apiGroup UserManage
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiParam{string} name 姓名
+     * @apiParam{string} password 密码
+     * @apiParam{string} branch 1文2理 可选
+     * @apiParam{string} class_id 班级 可选
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/userlist/edit/:Noid
+     */
+    public function user_edit($Noid,Request $request){
+
+        $opuser= $request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"未登录"]);
+        if(!in_array(17,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"禁止访问"]);
+
+        try{
+            $input=$request->only(['name','password','branch','class_id','major_id']);
+            $validator = \Validator::make($input,[
+                'password'=>'required|max:16|min:6',
+                'name'=>'required',
+                'branch'=>'nullable|alpha_num',
+                'class_id'=>'nullable|alpha_num|max:10|min:1',
+                'major_id'=>'nullable|alpha_num|max:10|min:1',
+            ]);
+            if ($validator->fails()) return response()->json(['code'=>400,'msg'=>'参数错误']);
+            $user =User::where("Noid",$Noid)->first();
+            $user->name=$input['name'];
+            $user->password=md5(md5($input['password']).$input['password']);
+            if($input['class_id']){
+                $class=Cllass::where("id",$input['class_id'])->first();
+                if(!$class) return response()->json(["code"=>403,"msg"=>"class not found"]);
+                $user->class_id=$class->id;
+                $user->major_id=$class->major_id;
+            }
+            $user->branch=$input['branch'];
+            $user->save();
+            log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"update","修改用户".$Noid,1);
+            return response()->json(['code'=>200,'msg'=>'添加成功']);
+        }catch(\Exception $e){
+            return response()->json(['code'=>400,"msg"=>$e->getMessage()]);
+        }
+
+    }
+
+
+
 }

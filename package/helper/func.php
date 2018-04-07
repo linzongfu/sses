@@ -1,6 +1,7 @@
 <?php
 use App\Models\Appoint;
 use App\Models\Operate;
+use App\Models\Log;
 
 function getArraybystr($Elo,$str){
     $sid=[];
@@ -25,6 +26,17 @@ function getfuncby($Noid){
         $func=Operate::select("func_id")->whereIn("role_id",$roleid)->distinct()->get();
         $funcid=getArraybystr($func,"func_id");
     return $funcid;
+}
+
+function log_add($opuser,$url,$ip,$catalog,$info,$type){
+    $log=new Log();
+    $log->Noid=$opuser;
+    $log->url=$url;
+    $log->ip=$ip;
+    $log->catalog=$catalog;
+    $log->info=$info;
+    $log->type=$type;
+    $log->save();
 }
 
 ?>
