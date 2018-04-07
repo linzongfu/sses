@@ -8,6 +8,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Psy\Test\Exception\RuntimeExceptionTest;
 
 class UserController extends Controller
 {
@@ -76,12 +77,44 @@ class UserController extends Controller
 
         $user=User::where("Noid",$Noid)->first();
         if(!$user) return  response()->json(["code"=>403,"msg"=>"无此用户"]);
-//        try{
-//            $user->delete();
-//            $log=new Log();
-//            $log->Noid=$opuser;
-//         //   $url
-//        }catch (){}
+        try{
+            $user->delete();
+            $log=new Log();
+            $log->Noid=$opuser;
+            $log->url=$request->getRequestUri();
+            $log->ip=$request->getClientIp();
+            $log->catalog="delete";
+            $log->info="删除用户".$Noid;
+            $log->type=1;
+            $log->save();
+            return response()->json(["code"=>200,"msg"=>"删除成功"]);
+        }catch (\Exception $e){
+            return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
+        }
+
+    }
+
+
+    /**
+     * @api {put} /admin/userlist/create 添加用户
+     *
+     * @apiName user_create
+     * @apiGroup UserManage
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/userlist/create
+     */
+    public function user_create(Request $request){
+        $opuser=$request->header("opuser");
+        return $opuser;
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(17,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+
 
     }
 }
