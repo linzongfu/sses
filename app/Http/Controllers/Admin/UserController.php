@@ -115,6 +115,7 @@ class UserController extends Controller
      * @apiParam{string} password 密码
      * @apiParam{string} branch 1文2理 可选
      * @apiParam{string} class_id 班级 可选
+     * @apiParam{string} role_id 角色 可选
      *
      * @apiSuccess {array} data
      * @apiSampleRequest /admin/userlist/create
@@ -126,7 +127,7 @@ class UserController extends Controller
                 return   response()->json(["code"=>403,"msg"=>"禁止访问"]);
 
             try{
-                $input=$request->only(['noid','name','password','branch','class_id','major_id']);
+                $input=$request->only(['noid','name','password','branch','class_id','major_id','role_id']);
                 $validator = \Validator::make($input,[
                     'noid'=>'required|unique:users',
                     'password'=>'required|max:16|min:6',
@@ -134,6 +135,7 @@ class UserController extends Controller
                     'branch'=>'nullable|alpha_num',
                     'class_id'=>'nullable|alpha_num|max:10|min:1',
                     'major_id'=>'nullable|alpha_num|max:10|min:1',
+                    'role_id'=>'nullable|alpha_num|max:10|min:1',
                 ]);
                 if ($validator->fails()) return response()->json(['code'=>400,'msg'=>'参数错误']);
 
@@ -150,7 +152,20 @@ class UserController extends Controller
                 $user->branch=$input['branch'];
                 $user->save();
                 log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"create","添加用户".$input['noid'],1);
-                return response()->json(['code'=>200,'msg'=>'添加成功']);
+
+                if($input['role_id']){
+                    $role=Role::find($input['role_id']);
+                    if(!$role)  return response()->json(['code'=>200,'msg'=>'添加成功']);
+                    $appoint=new Appoint();
+                    $appoint->Noid=$input['noid'];
+                    $appoint->role_id=$input['role_id'];
+                    $appoint->save();
+                    log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"create","任职".$input['noid']."为".$role->name,1);
+                }
+
+
+
+                return response()->json(['code'=>200,'msg'=>'添加并任职成功']);
             }catch(\Exception $e){
                 return response()->json(['code'=>400,"msg"=>$e->getMessage()]);
             }
@@ -177,7 +192,8 @@ class UserController extends Controller
         if(!in_array(17,getfuncby($opuser)))
             return   response()->json(["code"=>403,"msg"=>"禁止访问"]);
 
-        $result=Cllass::all();
+        $result["class"]=Cllass::all();
+        $result["role"]=Role::all();
       return response()->json($result);
     }
 

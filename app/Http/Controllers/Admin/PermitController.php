@@ -77,7 +77,7 @@ class PermitController extends Controller
 
 
     /**
-     * @api {post} /admin/permitlist/create
+     * @api {post} /admin/permitlist/create 添加视图权限
      *
      * @apiName permit_create
      * @apiGroup PermitManage
@@ -85,8 +85,10 @@ class PermitController extends Controller
      *
      * @apiHeader (opuser) {String} opuser
      *
-     * @apiParam{string} name 名称
-     * @apiParam{string}  remarks 备注
+     * @apiParam{int} permitPoint 权限点
+     * @apiParam{string}  remark 备注
+     * @apiParam{string}  type 级别
+     * @apiParam{string}  parent_id 父亲权限
      *
      * @apiSuccess {array} data
      * @apiSampleRequest /admin/permitlist/create
@@ -96,20 +98,21 @@ class PermitController extends Controller
         if(!$opuser) return response()->json(["code"=>401,"msg"=>"未登录"]);
         if(!in_array(17,getfuncby($opuser)))
             return   response()->json(["code"=>403,"msg"=>"禁止访问"]);
-
         try{
-            $input=$request->only(['name','remarks']);
+            $input=$request->only(['permitPoint','remark','type','parent_id']);
             $validator = \Validator::make($input,[
-                'name'=>'required',
+                'permitPoint'=>'required',
                 'remarks'=>'nullable',
             ]);
             if ($validator->fails()) return response()->json(['code'=>400,'msg'=>'参数错误']);
 
-            $fun =new FFunction();
-            $fun->name=$input['name'];
-            $fun->remarks=$input['remarks'];
-            $fun->save();
-            log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"create","添加功能".$input['name'],1);
+            $per =new Permit();
+            $per->permitPoint=$input['permitPoint'];
+            $per->remark=$input['remark'];
+            $per->type=$input['type'];
+            $per->parent_id=$input['parent_id'];
+            $per->save();
+            log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"create","添加视图权限".$input['remark'],1);
             return response()->json(['code'=>200,'msg'=>'添加成功']);
         }catch(\Exception $e){
             return response()->json(['code'=>400,"msg"=>$e->getMessage()]);
@@ -119,7 +122,7 @@ class PermitController extends Controller
 
 
     /**
-     * @api {put} /admin/permitlist/edit/:id
+     * @api {put} /admin/permitlist/edit/:id  编辑视图权限
      *
      * @apiName permit_update
      * @apiGroup  PermitManage
@@ -127,8 +130,10 @@ class PermitController extends Controller
      *
      * @apiHeader (opuser) {String} opuser
      *
-     * @apiParam{string} name 名称
-     * @apiParam{string} remarks 备注
+     * @apiParam{int} permitPoint 权限点
+     * @apiParam{string}  remark 备注
+     * @apiParam{string}  type 级别
+     * @apiParam{string}  parent_id 父亲权限
      *
      * @apiSuccess {array} data
      * @apiSampleRequest /admin/permitlist/edit/:d
@@ -141,21 +146,24 @@ class PermitController extends Controller
             return   response()->json(["code"=>403,"msg"=>"禁止访问"]);
 
         try{
-            $input=$request->only(['name','remarks']);
+            $input=$request->only(['permitPoint','remark','type','parent_id']);
             $validator = \Validator::make($input,[
-                'name'=>'required',
+                'permitPoint'=>'required',
                 'remarks'=>'nullable',
             ]);
             if ($validator->fails()) return response()->json(['code'=>400,'msg'=>'参数错误']);
-            $fun =FFunction::find($id);
-            $fun->name=$input['name'];
-            $fun->remarks=$input['remarks'];
-            $fun->save();
-            log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"update","修改功能".$input['name'],1);
+            $per =Permit::find($id);
+            $per->permitPoint=$input['permitPoint'];
+            $per->remark=$input['remark'];
+            $per->type=$input['type'];
+            $per->parent_id=$input['parent_id'];
+            $per->save();
+            log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"update","修改视图权限".$input['remark'],1);
             return response()->json(['code'=>200,'msg'=>'添加成功']);
         }catch(\Exception $e){
             return response()->json(['code'=>400,"msg"=>$e->getMessage()]);
         }
 
     }
+
 }

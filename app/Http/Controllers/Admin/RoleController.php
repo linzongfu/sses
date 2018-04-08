@@ -1,0 +1,153 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Models\Role;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+class RoleController extends Controller
+{
+    /**
+     * @api {get} /admin/rolelist 角色列表
+     *
+     * @apiName role_list
+     * @apiGroup RoleManage
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiParam {string}   sort   时间排序 可选 asc|desc
+     * @apiParam {string}  page 页码 默认第一页
+     * @apiParam {string}  limit 显示条数 默认10
+     *
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/rolelist
+     */
+    public function index(Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(17,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+        $result=null;
+        $sort=$request->get("sort");
+        if(!$sort)$sort="asc";
+        $page=$request->get('page');
+        $limit=$request->get('limit');
+        if(!$limit) $limit=10;
+        $page=$page?$page-1:0;
+        $start=$page*$limit;
+        $role=Role::whereNotNull("id");
+        $result["count"]=$role->count();
+
+        $result["role"]=$role->skip($start)->take($limit)->orderBy("id",$sort)->get();
+        return response()->json($result);
+    }
+
+    /**
+     * @api {delete} /admin/rolelist/delete/:id 删除角色
+     *
+     * @apiName role_delete
+     * @apiGroup RoleManage
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/rolelist/delete/:id
+     */
+    public function delete($id,Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(17,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $role=Role::find($id);
+        if(!$role) return  response()->json(["code"=>403,"msg"=>"无此角色"]);
+        $name=$role->name;
+        try{
+            $role->delete();
+            log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"delete","删除角色".$name,1);
+            return response()->json(["code"=>200,"msg"=>"删除成功"]);
+        }catch (\Exception $e){
+            return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
+        }
+    }
+
+
+    /**
+     * @api {post} /admin/rolelist/create 添加角色
+     *
+     * @apiName role_create
+     * @apiGroup RoleManage
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiParam{string}  name 名称
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/rolelist/create
+     */
+    public function create(Request $request){
+        $opuser= $request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"未登录"]);
+        if(!in_array(17,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"禁止访问"]);
+        try{
+            $input=$request->only(['name']);
+            $validator = \Validator::make($input,[
+                'name'=>'required|unique:roles',
+            ]);
+
+            if ($validator->fails()) return response()->json(['code'=>400,'msg'=>$input['name'].'存在']);
+            $role =new Role();
+            $role->name=$input['name'];
+            $role->save();
+            log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"create","添加角色".$input['name'],1);
+            return response()->json(['code'=>200,'msg'=>'添加成功']);
+        }catch(\Exception $e){
+            return response()->json(['code'=>400,"msg"=>$e->getMessage()]);
+        }
+
+    }
+
+
+    /**
+     * @api {put} /admin/rolelist/edit/:id  编辑角色
+     *
+     * @apiName role_update
+     * @apiGroup  RoleManage
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiParam{string}  name 名称
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/rolelist/edit/:id
+     */
+    public function edit($id,Request $request){
+
+        $opuser= $request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"未登录"]);
+        if(!in_array(17,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"禁止访问"]);
+
+        try{
+            $input=$request->only(['name']);
+            $validator = \Validator::make($input,[
+                'name'=>'required|unique:roles',
+            ]);
+            if ($validator->fails()) return response()->json(['code'=>400,'msg'=>$input['name'].'存在']);
+            $role =Role::find($id);
+            $role->name=$input['name'];
+            $role->save();
+            log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"update","修改角色".$input['name'],1);
+            return response()->json(['code'=>200,'msg'=>'修改成功']);
+        }catch(\Exception $e){
+            return response()->json(['code'=>400,"msg"=>$e->getMessage()]);
+        }
+
+    }
+}

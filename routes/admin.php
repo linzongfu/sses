@@ -35,6 +35,10 @@ Route::group(['namespace'=>'Admin',
     $app->put('/permitlist/edit/{id}', 'PermitController@permit_edit');
     $app->delete('/permitlist/delete/{id}', 'PermitController@permit_delete');
 
+    $app->get('/rolelist', 'RoleController@index');
+    $app->post('/rolelist/create', 'RoleController@create');
+    $app->put('/rolelist/edit/{id}', 'RoleController@edit');
+    $app->delete('/rolelist/delete/{id}', 'RoleController@delete');
 
 
 
