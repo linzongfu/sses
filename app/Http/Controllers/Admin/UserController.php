@@ -112,7 +112,7 @@ class UserController extends Controller
      *
      * @apiParam{string} noid 编号
      * @apiParam{string} name 姓名
-     * @apiParam{string} password 密码
+     * @apiParam{string} password 密码 可选
      * @apiParam{string} branch 1文2理 可选
      * @apiParam{string} class_id 班级 可选
      * @apiParam{string} role_id 角色 可选
@@ -233,7 +233,7 @@ class UserController extends Controller
             if ($validator->fails()) return response()->json(['code'=>400,'msg'=>'参数错误']);
             $user =User::where("Noid",$Noid)->first();
             $user->name=$input['name'];
-            $user->password=md5(md5($input['password']).$input['password']);
+            if($input['password']) $user->password=md5(md5($input['password']).$input['password']);
             if($input['class_id']){
                 $class=Cllass::where("id",$input['class_id'])->first();
                 if(!$class) return response()->json(["code"=>403,"msg"=>"class not found"]);

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Appoint;
+use App\Models\FFunction;
+use App\Models\Operate;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -150,4 +153,67 @@ class RoleController extends Controller
         }
 
     }
+
+    /**
+     * @api {get} /admin/rolelist/appoint/:role_id 角色功能
+     *
+     * @apiName role_appoint_index
+     * @apiGroup RoleManage
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/rolelist/appoint/:role_id
+     */
+    public function show($id,Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(17,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $role=Role::find($id);
+        if(!$role) return  response()->json(["code"=>403,"msg"=>"无此角色"]);
+        $result["role"]=$role;
+        $funs=getArraybystr(Operate::where("role_id",$id)->get(),"func_id");
+        $funs=FFunction::wherein("id",$funs)->get();
+         $result["fun"]=$funs;
+         return response()->json($result);
+    }
+
+
+    /**
+     * @api {delete} /admin/rolelist/appoint/:role_id/delete/:func_id  删除角色功能
+     *
+     * @apiName role_appoint_delete
+     * @apiGroup RoleManage
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/rolelist/appoint/:role_id/delete/:func_id
+     */
+    public function operate_delete($roleid,Request $request,$func_id){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(17,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $operate=Operate::where(["role_id"=>$roleid,"func_id"=>$func_id])->first();
+        if(!$operate) return  response()->json(["code"=>403,"msg"=>"无此角色"]);
+        try{
+            $operate->delete();
+            log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"delete","删除角色".$roleid."的任职".$func_id,1);
+            return response()->json(["code"=>200,"msg"=>"删除成功"]);
+        }catch (\Exception $e){
+            return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
+        }
+    }
+
+
+
+
+
+
 }
