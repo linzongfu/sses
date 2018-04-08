@@ -211,8 +211,40 @@ class RoleController extends Controller
         }
     }
 
+    /**
+     * @api {post} /admin/rolelist/appoint/:role_id/create/:func_id 添加角色功能
+     *
+     * @apiName role_appoint_create
+     * @apiGroup RoleManage
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiParam{string}  name 名称
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/rolelist/appoint/:role_id/create/:func_id
+     */
+    public function operate_create($roleid,Request $request,$func_id){
+        $opuser= $request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"未登录"]);
+        if(!in_array(17,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"禁止访问"]);
 
+        $operate=Operate::where(["role_id"=>$roleid,"func_id"=>$func_id])->first();
+        if($operate) return  response()->json(["code"=>403,"msg"=>"此角色功能存在"]);
+        try{
+            $operate=new Operate();
+            $operate->role_id=$roleid;
+            $operate->func_id=$func_id;
+            $operate->save();
+            log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"create","添加角色".$roleid."的任职".$func_id,1);
+            return response()->json(["code"=>200,"msg"=>"添加成功"]);
+        }catch (\Exception $e){
+            return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
+        }
 
+    }
 
 
 
