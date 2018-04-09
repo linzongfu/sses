@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Log;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class LogController extends Controller
 {
     /**
-     * @api {get} /admin/loglist 用户列表
+     * @api {get} /admin/loglist 日志管理
      *
      * @apiName system_list
      * @apiGroup systemManage
@@ -34,12 +35,24 @@ class LogController extends Controller
 
         $input=$request->only(['noid','ip','catelog','type']);
         $validator = \Validator::make($input,[
-            'noid'=>'nullable|unique:users',
-            'ip'=>'nullable|max:16|min:6',
-            'catelog'=>'nullable|alpha_num',
-            'type'=>'nullable|alpha_num|max:10|min:1',
+            'noid'=>'nullable|alpha_num',
+            'ip'=>'nullable|ip',
+            'catelog'=>'nullable|alpha',
+            'type'=>'nullable',
         ]);
-        return response()->json($result);
+        if ($validator->fails()) return response()->json(['code'=>400,'msg'=>'参数错误']);
+        $log=Log::whereNotNull("Noid");
+        if($input["noid"])$log=$log->where("Noid",$input["noid"]);
+        if($input["ip"])$log=$log->where("ip",$input["ip"]);
+        if($input["catelog"])$log=$log->where("catelog",$input["catelog"]);
+        $page=$request->get('page');
+        $limit=$request->get('limit');
+        if(!$limit) $limit=10;
+        $page=$page?$page-1:0;
+
+        $start=$page*$limit;
+        $log=$log->skip($start)->take($limit)->orderBy("created_at",'desc')->get();
+        return response()->json($log);
 
 
     }
