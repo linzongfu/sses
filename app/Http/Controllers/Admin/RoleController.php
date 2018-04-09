@@ -301,11 +301,19 @@ class RoleController extends Controller
         $role=Role::find($id);
         if(!$role) return  response()->json(["code"=>403,"msg"=>"无此角色"]);
         $result["role"]=$role;
+        $views=Authview::where("role_id",$id)->first();
+
+
+
         $per=$request->get("permits");
         if(!$per) return response()->json(["code"=>403,"msg"=>"请输入permits"]);
 
        // return $per;
         try{
+            if(!$views){
+                $views=new  Authview();
+                $views->role_id=$id;
+            }
             $views->permits=$per;
             $views->save();
             log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"update","编辑角色".$role->name."的视图",1);
