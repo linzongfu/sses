@@ -45,7 +45,8 @@ Route::group(['namespace'=>'Admin',
     $app->delete('rolelist/appoint/{role_id}/delete/{func_id}', 'RoleController@operate_delete');
     $app->post('rolelist/appoint/{role_id}/create/{func_id}', 'RoleController@operate_create');
 
-
+    $app->get('/rolelist/authview/{id}', 'RoleController@authview_show');
+    $app->put('/rolelist/authview/{id}/edit', 'RoleController@authview_edit');
 
 
    $app->get('/questype', 'QuestypeController@index');

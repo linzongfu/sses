@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Appoint;
+use App\Models\Authview;
 use App\Models\FFunction;
 use App\Models\Operate;
+use App\Models\Permit;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -246,6 +248,72 @@ class RoleController extends Controller
 
     }
 
+    /**
+     * @api {get} /admin/rolelist/authview/:role_id 角色视图
+     *
+     * @apiName role_authview_index
+     * @apiGroup RoleManage
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/rolelist/authview/:role_id
+     */
+    public function authview_show($id,Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(17,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $role=Role::find($id);
+        if(!$role) return  response()->json(["code"=>403,"msg"=>"无此角色"]);
+        $result["role"]=$role;
+        $views=Authview::where("role_id",$id)->first();
+        if(!$views) return response()->json(["code"=>403,"msg"=>"无此角色视图"]);
+        $permit=Permit::wherein("id",explode(',', $views->permits))->get();
+        $result["authview"]=$permit;
+        return response()->json($result);
+    }
+
+    /**
+     * @api {put} /admin/rolelist/authview/:role_id/edit 编辑角色视图
+     *
+     * @apiName role_authview_edit
+     * @apiGroup RoleManage
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     *  @apiParam{array}  permits id
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/rolelist/authview/:role_id/edit
+     */
+    public function authview_edit($id,Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(17,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $role=Role::find($id);
+        if(!$role) return  response()->json(["code"=>403,"msg"=>"无此角色"]);
+        $result["role"]=$role;
+        $views=Authview::where("role_id",$id)->first();
+        if(!$views) return response()->json(["code"=>403,"msg"=>"无此角色视图"]);
+
+        $permits=$request->get("permits");
+        if(!$permits) return response()->json(["code"=>403,"msg"=>"请输入permits"]);
+        $per=implode(",",$permits);
+       // return $per;
+        try{
+            $views->permits=$per;
+            $views->save();
+            log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"update","编辑角色".$role->name."的视图",1);
+            return response()->json(["code"=>200,"msg"=>"编辑成功"]);
+        }catch (\Exception $e){
+            return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
+        }
 
 
+    }
 }
