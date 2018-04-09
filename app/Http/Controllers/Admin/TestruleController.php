@@ -79,7 +79,8 @@ class TestruleController extends Controller
             if ($validator->fails()) return response()->json(['code' => 400, 'msg' => $validator->errors()]);
             $rule = Testrule::find($id);
             if (!$rule) return response()->json(["code" => 403, "msg" => "没有这个测试规则"]);
-            if ($input['choice_count']) $rule->
+            if ($input['choice_count']) $rule->choice_count=$input['choice_count'];
+            if ($input['judge_count']) $rule->choice_count=$input['judge_count'];
                 log_add($opuser, $request->getRequestUri(), $request->getClientIp(), "update", "修改视图权限" . $input['remark'], 1);
                 return response()->json(['code' => 200, 'msg' => '添加成功']);
             } catch (\Exception $e) {

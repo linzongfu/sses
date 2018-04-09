@@ -301,9 +301,6 @@ class RoleController extends Controller
         $role=Role::find($id);
         if(!$role) return  response()->json(["code"=>403,"msg"=>"无此角色"]);
         $result["role"]=$role;
-        $views=Authview::where("role_id",$id)->first();
-        if(!$views) return response()->json(["code"=>403,"msg"=>"无此角色视图"]);
-
         $per=$request->get("permits");
         if(!$per) return response()->json(["code"=>403,"msg"=>"请输入permits"]);
 
