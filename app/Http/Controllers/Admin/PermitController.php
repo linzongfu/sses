@@ -17,9 +17,6 @@ class PermitController extends Controller
      *
      * @apiHeader (opuser) {String} opuser
      *
-     * @apiParam {string}   sort   时间排序 可选 asc|desc
-     * @apiParam {string}  page 页码 默认第一页
-     * @apiParam {string}  limit 显示条数 默认10
      *
      *
      * @apiSuccess {array} data
@@ -32,15 +29,13 @@ class PermitController extends Controller
         $result=null;
         $sort=$request->get("sort");
         if(!$sort)$sort="asc";
-        $page=$request->get('page');
-        $limit=$request->get('limit');
-        if(!$limit) $limit=10;
-        $page=$page?$page-1:0;
-        $start=$page*$limit;
+
+
+
         $fun=Permit::where("status",1);
         $result["count"]=$fun->count();
 
-        $result["per"]=$fun->skip($start)->take($limit)->orderBy("id",$sort)->get();
+        $result["per"]=$fun->orderBy("id",$sort)->get();
         return response()->json($result);
     }
 
