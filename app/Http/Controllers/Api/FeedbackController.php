@@ -40,7 +40,7 @@ class FeedbackController extends Controller
            $feedback->user_id=$user->Noid;
            $feedback->name=$user->name;
            $feedback->content=$content;
-           if($contact) $feedback->contact=$content;
+           if($contact) $feedback->contact=$contact;
            $feedback->save();
            return response()->json(["code"=>200,"msg"=>"add sucess"]);
        }catch (\Exception $e){
