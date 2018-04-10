@@ -8,6 +8,7 @@ use App\Models\Cllass;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Redis;
 use Tymon\JWTAuth\Claims\Claim;
 
 class AccidentController extends Controller

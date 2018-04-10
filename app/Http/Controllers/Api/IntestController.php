@@ -243,7 +243,7 @@ class IntestController extends Controller
     /**
      * @api {get} /api/intest/index/:id  某次测试的详情
      *
-     * @apiName  index
+     * @apiName  index_show
      * @apiGroup StageTest
      * @apiVersion 1.0.0
      * @apiHeader (opuser) {String} opuser
