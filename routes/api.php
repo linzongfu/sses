@@ -47,7 +47,7 @@ Route::group([
     $app->post('/intesting/submit', 'TestingController@submit');
     $app->post('/intesting/debate', 'TestingController@debate');
 
-
+    $app->post('/feedback', 'FeedbackController@feedback');
 
     $app->get('/teacher/index', 'TeaController@index');
     $app->get('/teacher/showteach', 'TeaController@show');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Cllass;
+use App\Models\Enmajortest;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -44,14 +45,24 @@ class HeadmasterController extends Controller
 
         $start=$page*$limit;
 
-
-
-        $user=User::where("class_id",$class->id)
-           // ->select("Noid",'name')
-            ->take($start)->limit($limit)
+        $user=User::where("class_id",$class->id);
+        $ids=getArraybystr($user->get(),"Noid");
+        $result["count"]=$user->count();
+        $user =$user->take($start)->limit($limit)
             ->get();
-        return $user;
+        $result["user"]=$user;
+        $result["A"]=Enmajortest::wherein("user_id",$ids)->whereBetween('sumscore',[90,100])->get()->count();
+        $result["B"]=Enmajortest::wherein("user_id",$ids)->whereBetween('sumscore',[80,89])->get()->count();
+        $result["C"]=Enmajortest::wherein("user_id",$ids)->whereBetween('sumscore',[70,79])->get()->count();
+        $result["D"]=Enmajortest::wherein("user_id",$ids)->whereBetween('sumscore',[60,69])->get()->count();
+        $result["E"]=Enmajortest::wherein("user_id",$ids)->whereBetween('sumscore',[0,59])->get()->count();
+        return $result;
     }
+
+
+
+
+
 
 
     /**

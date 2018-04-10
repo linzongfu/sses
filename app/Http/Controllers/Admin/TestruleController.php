@@ -66,23 +66,32 @@ class TestruleController extends Controller
         try {
             $input = $request->only(['choice_count','judge_count','completion_count','answer_count', 'choice_rate' , 'judge_rate' , 'completion_rate' , 'answer_rate' , 'project_rate' ,]);
             $validator = \Validator::make($input, [
-                'choice_count' => 'nullable|integer|min:0|max:2',
-                'judge_count' => 'nullable|integer|min:0|max:2',
-                'completion_count' => 'nullable|integer|min:0|max:2',
-                'answer_count' => 'nullable|integer|min:0|max:2',
-                'choice_rate' => 'nullable|integer|min:0|max:2',
-                'judge_rate' => 'nullable|integer|min:0|max:2',
-                'completion_rate' => 'nullable|integer|min:0|max:2',
-                'answer_rate' => 'nullable|integer|min:0|max:2',
-                'project_rate' => 'nullable|integer|min:0|max:2',
+                'choice_count' => 'nullable|integer|min:0|max:100',
+                'judge_count' => 'nullable|integer|min:0|max:100',
+                'completion_count' => 'nullable|integer|min:0|max:100',
+                'answer_count' => 'nullable|integer|min:0|max:100',
+                'choice_rate' => 'nullable|integer|min:0|max:100',
+                'judge_rate' => 'nullable|integer|min:0|max:100',
+                'completion_rate' => 'nullable|integer|min:0|max:100',
+                'answer_rate' => 'nullable|integer|min:0|max:100',
+                'project_rate' => 'nullable|integer|min:0|max:100',
             ]);
             if ($validator->fails()) return response()->json(['code' => 400, 'msg' => $validator->errors()]);
             $rule = Testrule::find($id);
             if (!$rule) return response()->json(["code" => 403, "msg" => "没有这个测试规则"]);
             if ($input['choice_count']) $rule->choice_count=$input['choice_count'];
             if ($input['judge_count']) $rule->choice_count=$input['judge_count'];
-                log_add($opuser, $request->getRequestUri(), $request->getClientIp(), "update", "修改视图权限" . $input['remark'], 1);
-                return response()->json(['code' => 200, 'msg' => '添加成功']);
+            if ($input['completion_count']) $rule->completion_count=$input['completion_count'];
+            if ($input['answer_count']) $rule->answer_count=$input['answer_count'];
+
+            if ($input['choice_rate']) $rule->choice_rate=$input['choice_rate']/100;
+            if ($input['judge_rate']) $rule->judge_rate=$input['judge_rate']/100;
+            if ($input['completion_rate']) $rule->completion_rate=$input['completion_rate']/100;
+            if ($input['answer_rate']) $rule->answer_rate=$input['answer_rate']/100;
+            if ($input['project_rate']) $rule->project_rate=$input['project_rate']/100;
+            $rule->save();
+                log_add($opuser, $request->getRequestUri(), $request->getClientIp(), "update", "修改".$rule->name."规则", 1);
+                return response()->json(['code' => 200, 'msg' => '修改成功']);
             } catch (\Exception $e) {
                 return response()->json(['code' => 400, "msg" => $e->getMessage()]);
             }

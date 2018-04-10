@@ -55,7 +55,14 @@ Route::group(['namespace'=>'Admin',
    $app->post('/questype/edit', 'QuestypeController@editquestype');
    $app->delete('/questype/del', 'QuestypeController@delquestype');
    $app->get('/questype/{id}', 'QuestypeController@show');
+
    $app->get('/loglist', 'LogController@index');
+
+
+   $app->get('/feedback', 'SystemController@index');
+   $app->get('/feedback/{id}', 'SystemController@show');
+
+
    $app->get('/testrule', 'TestruleController@index');
    $app->put('/testrule/edit/{id}', 'TestruleController@rule_edit');
 });
