@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Cllass;
 use App\Models\Enmajortest;
+use App\Models\Intest;
 use App\Models\User;
 use Carbon\Carbon;
 use Faker\Test\Calculator\InnTest;
@@ -58,7 +59,8 @@ class HeadmasterController extends Controller
         $result["D"]=Enmajortest::wherein("user_id",$ids)->whereBetween('sumscore',[60,69])->get()->count();
         $result["E"]=Enmajortest::wherein("user_id",$ids)->whereBetween('sumscore',[0,59])->get()->count();
 
-       // $result["stage"]=InnTest::where(" ")
+        $time=Carbon::now();
+        $result["stage"]=Intest::where("class_id",$class->id)->where("endtime_at",'<',$time)->select("stage_id","max_score","min_score","aver_score")->get();
        return $result;
     }
 
