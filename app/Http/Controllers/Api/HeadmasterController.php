@@ -6,6 +6,7 @@ use App\Models\Cllass;
 use App\Models\Enmajortest;
 use App\Models\User;
 use Carbon\Carbon;
+use Faker\Test\Calculator\InnTest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -56,7 +57,9 @@ class HeadmasterController extends Controller
         $result["C"]=Enmajortest::wherein("user_id",$ids)->whereBetween('sumscore',[70,79])->get()->count();
         $result["D"]=Enmajortest::wherein("user_id",$ids)->whereBetween('sumscore',[60,69])->get()->count();
         $result["E"]=Enmajortest::wherein("user_id",$ids)->whereBetween('sumscore',[0,59])->get()->count();
-        return $result;
+
+       // $result["stage"]=InnTest::where(" ")
+       return $result;
     }
 
 
@@ -78,17 +81,15 @@ class HeadmasterController extends Controller
      * @apiSampleRequest /api/headmaster/test
      */
     public function  test(Request $request){
-        $opuser=$request->header("opuser");
-        $aa=Cllass::where("headmaster_id",$opuser)
-        ->leftJoin("patterns","classs.pattern_id","patterns.id")
-            ->select("classs.*","patterns.name")
-        ->first();
-       $first=Carbon::parse($aa->created_at);
-       $second=Carbon::parse($aa->end_at);
-       $r["1"]=$aa->created_at;
-       $r["2"]=$aa->end_at;
-       $r["3"]=$first->diffInMonths($second,false);
-        return $r;
+        $min=30;
+        $max=60;
+
+        for($i=0;$i<6;$i++){
+             $a[$i]=rand($min,$max);
+             $max=$max+7;
+             $min=$min+7;
+        }
+return $a;
     }
 
 
