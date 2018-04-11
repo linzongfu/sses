@@ -107,9 +107,9 @@ Route::group([
 
 
 
-    $app->get('/evalustion/front','EvaluController@front');
-    $app->post('/evalustion/choice','EvaluController@choice');
-    $app->post('/evalustion/evaluating','EvaluController@add');
+    $app->get('/evaluation/front','EvaluController@front');
+    $app->post('/evaluation/choice','EvaluController@choice');
+    $app->post('/evaluation/evaluating','EvaluController@add');
 
 
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
