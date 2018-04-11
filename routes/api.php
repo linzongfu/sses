@@ -106,6 +106,12 @@ Route::group([
     $app->get('/accident/del/{id}','AccidentController@del');
 
 
+
+    $app->get('/evalustion/front','EvaluController@front');
+    $app->post('/evalustion/choice','EvaluController@choice');
+    $app->post('/evalustion/evaluating','EvaluController@add');
+
+
     $app->get('/Test/{id}', 'Api\TestController@EnTest');
     $app->get('/aa','HomeController@index');
 
