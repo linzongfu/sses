@@ -94,8 +94,7 @@ class HeadmasterController extends Controller
      */
     public function  test(Request $request){
       //  try {
-            Redis::set('name', "dd");
-            return Redis::EXISTS('nme');
+          Redis::flushall();
        // }catch (\Exception $e){
          //   return $e->getMessage();
       //  }
