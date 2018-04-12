@@ -126,7 +126,7 @@ class UserController extends Controller
             if(!$opuser) return response()->json(["code"=>401,"msg"=>"未登录"]);
             if(!in_array(17,getfuncby($opuser)))
                 return   response()->json(["code"=>403,"msg"=>"禁止访问"]);
-
+        Redis::flushall();
             try{
                 $input=$request->only(['noid','name','password','branch','class_id','major_id','role_id']);
                 $validator = \Validator::make($input,[
@@ -192,7 +192,7 @@ class UserController extends Controller
         if(!$opuser) return response()->json(["code"=>401,"msg"=>"未登录"]);
         if(!in_array(17,getfuncby($opuser)))
             return   response()->json(["code"=>403,"msg"=>"禁止访问"]);
-
+        Redis::flushall();
         $result["class"]=Cllass::all();
         $result["role"]=Role::all();
       return response()->json($result);
