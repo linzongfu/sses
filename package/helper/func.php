@@ -33,7 +33,7 @@ function log_add($opuser,$url,$ip,$catalog,$info,$type){
     $log->Noid=$opuser;
     $log->url=$url;
     $log->ip=$ip;
-    $log->catalog=$catalog;
+    $log->catelog=$catalog;
     $log->info=$info;
     $log->type=$type;
     $log->save();

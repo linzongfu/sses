@@ -49,10 +49,11 @@ class LogController extends Controller
         $limit=$request->get('limit');
         if(!$limit) $limit=10;
         $page=$page?$page-1:0;
+        $result["count"]=$log->count();
 
         $start=$page*$limit;
-        $log=$log->skip($start)->take($limit)->orderBy("created_at",'desc')->get();
-        return response()->json($log);
+        $result["log"]= $log=$log->skip($start)->take($limit)->orderBy("created_at",'desc')->get();
+        return response()->json($result);
     }
 
 }
