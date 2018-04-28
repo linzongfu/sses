@@ -80,6 +80,7 @@ Route::group([
 
 
     $app->get("/enreport/{Noid}","ReportController@enReport");
+    $app->get("/startreport/{Noid}","ReportController@enReport");
 
 
     $app->get('/vote/index','VoteController@index');

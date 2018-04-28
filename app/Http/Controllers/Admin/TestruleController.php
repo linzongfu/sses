@@ -76,11 +76,12 @@ class TestruleController extends Controller
                 'answer_rate' => 'nullable|integer|min:0|max:100',
                 'project_rate' => 'nullable|integer|min:0|max:100',
             ]);
+         
             if ($validator->fails()) return response()->json(['code' => 400, 'msg' => $validator->errors()]);
             $rule = Testrule::find($id);
             if (!$rule) return response()->json(["code" => 403, "msg" => "没有这个测试规则"]);
             if ($input['choice_count']) $rule->choice_count=$input['choice_count'];
-            if ($input['judge_count']) $rule->choice_count=$input['judge_count'];
+            if ($input['judge_count']) $rule->judge_count=$input['judge_count'];
             if ($input['completion_count']) $rule->completion_count=$input['completion_count'];
             if ($input['answer_count']) $rule->answer_count=$input['answer_count'];
 

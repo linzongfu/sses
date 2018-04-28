@@ -125,6 +125,34 @@ class TeaController extends Controller
         return response()->json($result);
     }
 
+    /**
+     * @api {get} /api/teacher/showteach/:id   签到
+     *
+     * @apiName LookAttend
+     * @apiGroup Teacher
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     * @apiHeaderExample {json} Header-Example:
+     * {
+     *      opuser
+     * }
+     *
+     * @apiParam {int}  classid 任课班级id
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/teacher/showteach/:id
+     */
+    public function addattend($id,Request $request){
+        $opuser=$request->header("opuser");
+        // dd($opuser);
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(4,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+
+
+        return response()->json($result);
+    }
 
 
 }

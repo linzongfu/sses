@@ -45,6 +45,18 @@ class ReportController extends Controller
        return response()->json($result);
    }
 
+    /**
+     * @api {get} /api/enreport/:Noid  学中报告
+     *
+     * @apiName  Start_Report
+     * @apiGroup report
+     * @apiVersion 1.0.0
+     *
+     *@apiHeader (opuser) {String} opuser
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/enreport/:Noid
+     */
     public  function StageReport($Noid,Request $request){
         $opuser=$request->header("opuser");
         if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
