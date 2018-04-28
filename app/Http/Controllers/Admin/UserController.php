@@ -245,7 +245,7 @@ class UserController extends Controller
             $user->save();
             log_add($opuser,$request->getRequestUri(),$request->getClientIp(),"update","修改用户".$Noid,1);
             Redis::flushall();
-            return response()->json(['code'=>200,'msg'=>'添加成功']);
+            return response()->json(['code'=>200,'msg'=>'修改成功']);
         }catch(\Exception $e){
             return response()->json(['code'=>400,"msg"=>$e->getMessage()]);
         }

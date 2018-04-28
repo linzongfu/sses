@@ -233,6 +233,5 @@ class TestingController extends Controller
         catch (\Exception $e){
             return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
         }
-
     }
 }

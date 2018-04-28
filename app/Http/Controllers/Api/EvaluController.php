@@ -149,10 +149,68 @@ class EvaluController extends Controller
             $evaluation->status=1;
             $evaluation->save();
 
-return response()->json(["code"=>200,"msg"=>"evaluation sucess"]);
+            return response()->json(["code"=>200,"msg"=>"evaluation sucess"]);
         }catch (\Exception $e){
             return response()->json(["code"=>403,$e->getMessage()]);
        }
+
+        return response()->json($stud);
+    }
+    public function jieye_evaluation(Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+
+        $input = $request->only(['role_id','morality','citizen','study', 'cooperation' , 'sport' , 'Noid' , 'summary','autograph']);
+        $validator = \Validator::make($input, [
+            'role_id' => 'required|integer|min:0|max:6',
+            'morality' => 'required|integer|min:0|max:10',
+            'citizen' => 'required|integer|min:0|max:10',
+            'study' => 'required|integer|min:0|max:10',
+            'cooperation' => 'required|integer|min:0|max:10',
+            'sport' => 'required|integer|min:0|max:10',
+            'Noid' => 'required',
+            'summary' => 'required',
+            'autograph'=> 'required'
+        ]);
+        if ($validator->fails()) return response()->json(['code' => 400, 'msg' => $validator->errors()]);
+
+        try{
+            $stud=User::where("Noid",$input['Noid'])->first();
+            $class=Cllass::where("classs.id",$stud->class_id)
+                ->leftJoin('patterns','classs.pattern_id','patterns.id')
+                ->select("classs.*",'patterns.name','patterns.time')
+                ->first();
+
+            $create=Carbon::parse($class->created_at);
+            $now=Carbon::now();
+            $stage=floor($now->diffInMonths($create)/$class->time)+1;
+            $evaluation=Evaluation::where([
+                [ "user_id",$opuser],
+                ["stud_id",$input['Noid']],
+                ["role",$input["role_id"]],
+                ["stage",$stage]
+            ])->first();
+            if($evaluation)return response()->json(["code"=>403,"msg"=>"you are alread evaluated"]);
+            $evaluation =new Evaluation();
+            $evaluation->stud_id=$input['Noid'];
+            $evaluation->user_id=$opuser;
+            $evaluation->role=$input["role_id"];
+            $evaluation->stage=$stage;
+            $evaluation->morality=$input['morality'];
+            $evaluation->study=$input['study'];
+            $evaluation->citizen=$input['citizen'];
+            $evaluation->cooperation=$input['cooperation'];
+            $evaluation->sport=$input['sport'];
+            $evaluation->summary=$input['summary'];
+            $evaluation->autograph=$input['autograph'];
+            $evaluation->sumscore=2*($input['morality']+$input['study']+$input['citizen']+$input['cooperation']+$input['sport']);
+            $evaluation->status=1;
+            $evaluation->save();
+
+            return response()->json(["code"=>200,"msg"=>"evaluation sucess"]);
+        }catch (\Exception $e){
+            return response()->json(["code"=>403,$e->getMessage()]);
+        }
 
         return response()->json($stud);
     }

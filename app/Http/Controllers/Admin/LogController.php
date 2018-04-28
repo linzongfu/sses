@@ -53,8 +53,6 @@ class LogController extends Controller
         $start=$page*$limit;
         $log=$log->skip($start)->take($limit)->orderBy("created_at",'desc')->get();
         return response()->json($log);
-
-
     }
 
 }
