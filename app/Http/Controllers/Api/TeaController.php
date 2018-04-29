@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Attend;
+use App\Models\Calendar;
 use App\Models\Cllass;
 use App\Models\Course;
 use App\Models\Teach;
@@ -125,10 +126,11 @@ class TeaController extends Controller
         return response()->json($result);
     }
 
+
     /**
-     * @api {get} /api/teacher/showteach/:id   签到
+     * @api {post} /api/teacher/attendmanage/:calendarid   学生出勤考勤
      *
-     * @apiName LookAttend
+     * @apiName Signin
      * @apiGroup Teacher
      * @apiVersion 1.0.0
      *
@@ -138,21 +140,76 @@ class TeaController extends Controller
      *      opuser
      * }
      *
-     * @apiParam {int}  classid 任课班级id
+     * @apiParam {int}  signin 0：迟到1：正常
+     * @apiParam {int}  signout 0：早退1：正常
+     * @apiParam {string}  student_id
      *
      * @apiSuccess {String} data
-     * @apiSampleRequest /api/teacher/showteach/:id
+     * @apiSampleRequest /api/teacher/attendmanage/:calendarid
      */
-    public function addattend($id,Request $request){
+    public function sign($id,Request $request){
         $opuser=$request->header("opuser");
-        // dd($opuser);
+
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(4,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+        $std_id=$request->get("student_id");
+        $signin=$request->get("signin");
+        if(!$signin)$signin=0;
+        $signout=$request->get("signout");
+        if(!$signout)$signout=0;
+        if(!$std_id) return response()->json(["code"=>403,"msg"=>"学号不能为空"]);
+        try {
+            $attend = Attend::where("student_id", $std_id)->where("calendar_id", $id)->first();
+            if (!$attend) {
+                $attend = new  Attend();
+                $attend->student_id = $std_id;
+                $attend->calendar_id = $id;
+            }
+            $attend->signin = $signin;
+            $attend->signout = $signout;
+            $attend->save();
+            return response()->json(["code"=>200,"msg"=>"success"]);
+        }catch (\Exception $e){
+            return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
+        }
+    }
+
+    /**
+     * @api {get} /api/teacher/attendfront/:calendarid   学生出勤考勤学生选择
+     *
+     * @apiName Signinfront
+     * @apiGroup Teacher
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     * @apiHeaderExample {json} Header-Example:
+     * {
+     *      opuser
+     * }
+     *
+     *
+     * @apiSuccess {String} data
+     * @apiSampleRequest /api/teacher/attendfront/:calendarid
+     */
+    public function attendfront($calendarid,Request $request){
+        $opuser=$request->header("opuser");
+
         if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
         if(!in_array(4,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
 
 
+        $calendar=Calendar::where("id",$calendarid)->select("teach_id")->first();
+        if(!$calendar) return response()->json(["code"=>403,"msg"=>"calendarid error"]);
+        $class=Teach::where("id",$calendar->teach_id)->select("teach_id","class_id")->first();
+        if($class->teach_id!=$opuser) return response()->json(["code"=>403,"msg"=>"calendarid error"]);
+        if(!$class) return response()->json(["code"=>403,"msg"=>"not this 教学记录"]);
 
-        return response()->json($result);
+        $exitstu=getArraybystr(Attend::where("calendar_id",$calendarid)->get(),"student_id");
+
+        $stu=User::where("class_id",$class->class_id)->whereNotIn("Noid",$exitstu)->select("Noid","name")->get();
+        return response()->json($stu);
+
+
     }
-
 
 }

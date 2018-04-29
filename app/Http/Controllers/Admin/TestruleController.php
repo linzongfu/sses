@@ -76,7 +76,7 @@ class TestruleController extends Controller
                 'answer_rate' => 'nullable|integer|min:0|max:100',
                 'project_rate' => 'nullable|integer|min:0|max:100',
             ]);
-         
+
             if ($validator->fails()) return response()->json(['code' => 400, 'msg' => $validator->errors()]);
             $rule = Testrule::find($id);
             if (!$rule) return response()->json(["code" => 403, "msg" => "没有这个测试规则"]);

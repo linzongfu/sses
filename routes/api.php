@@ -51,6 +51,8 @@ Route::group([
 
     $app->get('/teacher/index', 'TeaController@index');
     $app->get('/teacher/showteach', 'TeaController@show');
+    $app->get('/teacher/attendfront/{calendarid}', 'TeaController@attendfront');
+    $app->post('/api/teacher/attendmanage/{id} ', 'TeaController@attendfront');
 
     $app->get('/teacher/showteach/{id}', 'TeaController@showattend');
 
