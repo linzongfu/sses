@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Entesting;
+use App\Models\Grarule;
 use App\Models\Log;
 use App\Models\Testrule;
 use Illuminate\Http\Request;
@@ -98,5 +99,81 @@ class TestruleController extends Controller
             }
 
         }
+
+
+    /**
+     * @api {get} /admin/gratulaterule 结业报告规则
+     *
+     * @apiName gratulate_rule
+     * @apiGroup systemManage
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     *
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/gratulaterule
+     */
+    public function gra_index(Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(17,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+        $role=Grarule::all();
+        return response()->json($role);
+    }
+
+
+    /**
+     * @api {put} /admin/gratulaterule/edit/:id  结业报告规则修改
+     *
+     * @apiName gratulate_update
+     * @apiGroup  systemManage
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiParam{int} daily 日常方面 1使用2禁止
+     * @apiParam{int} personnel 人事经理方面 1使用2禁止
+     * @apiParam{int} technology 技术经理方面 1使用2禁止
+     * @apiParam{int} headmaster 班主任方面 1使用2禁止
+
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/gratulaterule/edit/:id
+     */
+    public function grarule_edit($id,Request $request)
+    {
+
+        $opuser = $request->header("opuser");
+        if (!$opuser) return response()->json(["code" => 401, "msg" => "未登录"]);
+        if (!in_array(17, getfuncby($opuser)))
+            return response()->json(["code" => 403, "msg" => "禁止访问"]);
+
+        $input = $request->only(['daily','personnel','technology','headmaster']);
+        $validator = \Validator::make($input, [
+            'daily' => 'nullable|integer|min:0|max:3',
+            'personnel' => 'nullable|integer|min:0|max:3',
+            'technology' => 'nullable|integer|min:0|max:3',
+            'headmaster' => 'nullable|integer|min:0|max:3'
+        ]);
+
+        if ($validator->fails()) return response()->json(['code' => 400, 'msg' => $validator->errors()]);
+        try {
+
+            $rule = Grarule::find($id);
+            if (!$rule) return response()->json(["code" => 403, "msg" => "没有这个结业报告规则"]);
+            if ($input['daily']) $rule->daily=$input['daily'];
+            if ($input['personnel']) $rule->personnel=$input['personnel'];
+            if ($input['technology']) $rule->technology=$input['technology'];
+            if ($input['headmaster']) $rule->headmaster=$input['headmaster'];
+            $rule->save();
+            log_add($opuser, $request->getRequestUri(), $request->getClientIp(), "update", "修改结业报告规则", 1);
+            return response()->json(['code' => 200, 'msg' => '修改成功']);
+        } catch (\Exception $e) {
+            return response()->json(['code' => 400, "msg" => $e->getMessage()]);
+        }
+
+    }
 
 }

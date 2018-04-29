@@ -61,6 +61,23 @@ Route::group(['namespace'=>'Admin',
 
    $app->get('/report/entrance/where', 'ReportController@enwhere');
    $app->get('/report/entrance/index', 'ReportController@enindex');
+   $app->post('/report/entrance/create', 'ReportController@encreate');
+   $app->put('/report/entrance/edit/{id}', 'ReportController@enedit');
+   $app->delete('/report/entrance/delete/{id}', 'ReportController@endelete');
+
+
+
+    $app->get('/report/stage/where', 'ReportController@stagewhere');
+    $app->get('/report/stage/index', 'ReportController@stageindex');
+    $app->post('/report/stage/create', 'ReportController@stagecreate');
+    $app->put('/report/stage/edit/{id}', 'ReportController@stageedit');
+    $app->delete('/report/stage/delete/{id}', 'ReportController@stagedelete');
+
+    $app->get('/report/graduate/where', 'GraduateController@where');
+    $app->get('/report/graduate/index', 'GraduateController@index');
+    $app->post('/report/graduate/create', 'GraduateController@create');
+    $app->put('/report/graduate/edit/{id}', 'GraduateController@edit');
+    $app->delete('/report/graduate/delete/{id}', 'GraduateController@delete');
 
 
    $app->get('/feedback', 'SystemController@index');
@@ -69,6 +86,10 @@ Route::group(['namespace'=>'Admin',
 
    $app->get('/testrule', 'TestruleController@index');
    $app->put('/testrule/edit/{id}', 'TestruleController@rule_edit');
+
+
+   $app->get('/gratulaterule', 'TestruleController@gra_index');
+   $app->put('/gratulaterule/edit/{id}', 'TestruleController@grarule_edit');
 });
 
 

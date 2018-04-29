@@ -72,4 +72,6 @@ class SystemController extends Controller
         return response()->json($back);
     }
 
+
+
 }
