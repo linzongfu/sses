@@ -59,6 +59,10 @@ Route::group(['namespace'=>'Admin',
    $app->get('/loglist', 'LogController@index');
 
 
+   $app->get('/report/entrance/where', 'ReportController@enwhere');
+   $app->get('/report/entrance/index', 'ReportController@enindex');
+
+
    $app->get('/feedback', 'SystemController@index');
    $app->get('/feedback/{id}', 'SystemController@show');
 
