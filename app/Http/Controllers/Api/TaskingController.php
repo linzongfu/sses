@@ -53,12 +53,12 @@ class TaskingController extends Controller
         $teach_id=$request->get("Teach_id");
 
         if(!$teach_id) {
-            $Task["Implement"]=Task::select('id','name','starttime','endtime')->where("starttime","<",$nowdata)->where("endtime",">",$nowdata)->whereIn("teach_id",getArraybystr($teach,"id"))->get();
-            $Task["End"]=Task::select('id','name','starttime','endtime')->where("starttime","<",$nowdata)->where("endtime","<",$nowdata)->whereIn("teach_id",getArraybystr($teach,"id"))->get();
+            $Task["Implement"]=Task::select('id','name','starttime','endtime')->where("starttime","<=",$nowdata)->where("endtime",">=",$nowdata)->whereIn("teach_id",getArraybystr($teach,"id"))->get();
+            $Task["End"]=Task::select('id','name','starttime','endtime')->where("starttime","<=",$nowdata)->where("endtime","<=",$nowdata)->whereIn("teach_id",getArraybystr($teach,"id"))->get();
            //return $teach_id;
         }else{
-            $Task["Implement"]=Task::select('id','name','starttime','endtime')->where("starttime","<",$nowdata)->where("endtime",">",$nowdata)->whereIn("teach_id",[$teach_id])->get();
-            $Task["End"]=Task::select('id','name','starttime','endtime')->where("starttime","<",$nowdata)->where("endtime","<",$nowdata)->whereIn("teach_id",[$teach_id])->get();
+            $Task["Implement"]=Task::select('id','name','starttime','endtime')->where("starttime","<=",$nowdata)->where("endtime",">=",$nowdata)->whereIn("teach_id",[$teach_id])->get();
+            $Task["End"]=Task::select('id','name','starttime','endtime')->where("starttime","<=",$nowdata)->where("endtime","<=",$nowdata)->whereIn("teach_id",[$teach_id])->get();
 
         }
         $result["Task"]=$Task;
