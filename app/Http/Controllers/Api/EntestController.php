@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Models\Cllass;
+use App\Models\Debate;
 use App\Models\Enmajortest;
 use App\Models\Entesting;
 use App\Models\Intest;
+use App\Models\Intesting;
 use App\Models\Label;
 use App\Models\Question;
 use App\Models\Qustype;
@@ -56,7 +58,17 @@ class EntestController extends Controller
           }
 
         $time=Carbon::now();
-        $intest=Intest::select('id','stage_id','starttime_at','endtime_at')->where("status",1)->where("class_id",$user->class_id)->where("starttime_at",'<',$time)->where("endtime_at",'>',$time)->get()->toArray();
+
+          $i1=getArraybystr(Intesting::where("user_id",$opuser)->get(),"intest_id");
+          $i2=getArraybystr(Debate::where("user_id",$opuser)->get(),"intest_id");
+        $intest=Intest::select('id','stage_id','starttime_at','endtime_at')
+            ->where("status",1)
+            ->where("class_id",$user->class_id)
+            ->whereNotIn("id",array_merge($i1,$i2))
+            ->where("starttime_at",'<',$time)
+            ->where("endtime_at",'>',$time)->get()->toArray();
+
+
         if(count($intest)!=0){
             $result["type"]=2;
             $result["remark"]="学中";

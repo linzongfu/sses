@@ -156,7 +156,6 @@ class TestingController extends Controller
                 return response()->json(["code"=>200,"msg"=>"submit success"]);
             }else
                 return response()->json(["code"=>403,"msg"=>"you already submit your answer"]);
-
         }catch (Exception $e){
             return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
         }

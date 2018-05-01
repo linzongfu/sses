@@ -82,7 +82,8 @@ Route::group([
 
 
     $app->get("/enreport/{Noid}","ReportController@enReport");
-    $app->get("/startreport/{Noid}","ReportController@enReport");
+    $app->get("/stagereport/{Noid}/list ","ReportController@StageReport_list");
+    $app->get("/stagereport/{Noid}/list/{stage} ","ReportController@StageReport");
 
 
     $app->get('/vote/index','VoteController@index');
