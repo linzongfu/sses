@@ -41,6 +41,8 @@ Route::group(['namespace'=>'Admin',
     $app->delete('/rolelist/delete/{id}', 'RoleController@delete');
 
 
+
+
     $app->get('/rolelist/appoint/{id}', 'RoleController@show');
     $app->delete('rolelist/appoint/{role_id}/delete/{func_id}', 'RoleController@operate_delete');
     $app->post('rolelist/appoint/{role_id}/create/{func_id}', 'RoleController@operate_create');
@@ -79,6 +81,10 @@ Route::group(['namespace'=>'Admin',
     $app->put('/report/graduate/edit/{id}', 'GraduateController@edit');
     $app->delete('/report/graduate/delete/{id}', 'GraduateController@delete');
 
+
+    $app->get('/pattern/index', 'GraduateController@iindex');
+    $app->post('/pattern/create ', 'GraduateController@ccreate');
+    $app->delete('pattern/delete/{id}', 'GraduateController@ddelete');
 
    $app->get('/feedback', 'SystemController@index');
    $app->get('/feedback/{id}', 'SystemController@show');

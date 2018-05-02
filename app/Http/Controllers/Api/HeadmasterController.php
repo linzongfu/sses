@@ -93,6 +93,10 @@ class HeadmasterController extends Controller
      * @apiSampleRequest /api/headmaster/test
      */
     public function  test(Request $request){
+
+        return \Hash::make(1234556);
+
+
       //  try {
           Redis::flushall();
        // }catch (\Exception $e){

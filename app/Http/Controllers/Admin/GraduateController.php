@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Grareport;
 use App\Models\Grarule;
+use App\Models\Pattern;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -11,7 +12,7 @@ class GraduateController extends Controller
 {
 
     /**
-     * @api {get} /admin/report/graduate/index 结业报告列表
+     * @api {get} /admin/pattern/index 结业报告列表
      *
      * @apiName graduate_index
      * @apiGroup Graduate_Report
@@ -186,4 +187,105 @@ class GraduateController extends Controller
             return response()->json(['code'=>400,"msg"=>$e->getMessage()]);
         }
     }
+
+
+
+
+
+
+    /**
+     * @api {get} /admin/pattern/index 教学模式主页
+     *
+     * @apiName pattern_index
+     * @apiGroup Pattern
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     *
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/pattern/index
+     */
+    public function iindex(Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(17,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+
+        $stagereport=Pattern ::all();
+
+        return response()->json($stagereport);
+    }
+
+
+    /**
+     * @api {delete} /admin/pattern/delete/:id 删除教学模式
+     *
+     * @apiName pattern_delete
+     * @apiGroup Pattern
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest /admin/pattern/delete/:id
+     */
+    public function ddelete($id,Request $request){
+        $opuser=$request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"pleace logged in"]);
+        if(!in_array(17,getfuncby($opuser))) return   response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
+
+        $report=Pattern::find($id);
+        if(!$report) return  response()->json(["code"=>403,"msg"=>"不存在的结业报告"]);
+        try{
+            $report->delete();
+            return response()->json(["code"=>200,"msg"=>"删除成功"]);
+        }catch (\Exception $e){
+            return response()->json(["code"=>403,"msg"=>$e->getMessage()]);
+        }
+    }
+
+
+    /**
+     * @api {post} /admin/pattern/create 添加教学模式
+     *
+     * @apiName pattern_create
+     * @apiGroup Pattern
+     * @apiVersion 1.0.0
+     *
+     * @apiHeader (opuser) {String} opuser
+     *
+     * @apiParam {string}  name 模式
+     * @apiParam {string}  remark 备注
+     * @apiParam {string}  time 时间
+     *
+     * @apiSuccess {array} data
+     * @apiSampleRequest  /admin/pattern/create
+     */
+    public function ccreate(Request $request){
+        $opuser= $request->header("opuser");
+        if(!$opuser) return response()->json(["code"=>401,"msg"=>"未登录"]);
+        if(!in_array(17,getfuncby($opuser)))
+            return   response()->json(["code"=>403,"msg"=>"禁止访问"]);
+
+        $input=$request->only(['name','remark','time']);
+
+
+        try{
+
+            $report =new Pattern();
+            $report->name=$input["name"];
+            $report->remark=$input['remark'];
+            $report->time=$input['time'];
+            $report->save();
+            return response()->json(['code'=>200,'msg'=>'添加成功']);
+        }catch(\Exception $e){
+            return response()->json(['code'=>400,"msg"=>$e->getMessage()]);
+        }
+    }
+
+
+
 }
