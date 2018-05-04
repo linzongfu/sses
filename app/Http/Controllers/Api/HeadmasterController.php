@@ -44,17 +44,14 @@ class HeadmasterController extends Controller
                 $class=Cllass::where("assistant_id",$opuser)->where("end_at",'>',$time)->first();
                 if (!$class) return response()->json(["code"=>403,"msg"=>"Prohibition of access"]);
             }
-            $page=$request->get('page');
-            $limit=$request->get('limit');
-            if(!$limit) $limit=10;
-            $page=$page?$page-1:0;
 
-            $start=$page*$limit;
+
+
 
             $user=User::where("class_id",$class->id);
             $ids=getArraybystr($user->get(),"Noid");
             $result["count"]=$user->count();
-            $user =$user->take($start)->limit($limit)
+            $user =$user
                 ->get();
             $result["user"]=$user;
             $result["A"]=Enmajortest::wherein("user_id",$ids)->whereBetween('sumscore',[90,100])->get()->count();
@@ -94,9 +91,9 @@ class HeadmasterController extends Controller
      */
     public function  test(Request $request){
 
-        return \Hash::make(1234556);
-
-
+//        $a=[1,2,3,4];
+//        $b=[1,2,3,4,5];
+//        return response()->json(array_intersect($a,$b));
       //  try {
           Redis::flushall();
        // }catch (\Exception $e){

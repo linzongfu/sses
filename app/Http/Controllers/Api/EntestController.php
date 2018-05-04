@@ -64,7 +64,7 @@ class EntestController extends Controller
         $intest=Intest::select('id','stage_id','starttime_at','endtime_at')
             ->where("status",1)
             ->where("class_id",$user->class_id)
-            ->whereNotIn("id",array_merge($i1,$i2))
+            ->whereNotIn("id",array_intersect($i1,$i2))
             ->where("starttime_at",'<',$time)
             ->where("endtime_at",'>',$time)->get()->toArray();
 
